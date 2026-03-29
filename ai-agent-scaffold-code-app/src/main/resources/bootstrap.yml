@@ -1,0 +1,12 @@
+#file: noinspection SpringBootApplicationYaml
+
+spring:
+  application:
+    name: ai-agent-scaffold-code  # 服务名称
+  profiles:
+    active: dev   # 环境
+  cloud:
+    nacos:
+      server-addr: 111.230.105.93:8848
+      config:
+        file-extension: yaml

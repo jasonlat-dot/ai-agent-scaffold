@@ -1,0 +1,143 @@
+#file: noinspection SpringBootApplicationYaml
+#file: noinspection SpringBootApplicationYaml
+server:
+  port: 8888
+  tomcat:
+    threads:
+      max: 200        # 设定处理客户请求的线程的最大数目，决定了服务器可以同时响应客户请求的数,默认200
+      min-spare: 50   # 初始化线程数,最小空闲线程数,默认是10
+    accept-count: 10  # 等待队列长度
+  servlet:
+    context-path: /api/${app.config.api-version}
+
+# 应用配置 app.config.api-version
+app:
+  config:
+    # 版本，方便通过接口版本升级
+    api-version: v1
+    # 跨域，开发阶段可以设置为 * 不限制
+    cross-origin: '*'
+
+# 线程池配置
+thread:
+  pool:
+    executor:
+      config:
+        core-pool-size: 20
+        max-pool-size: 50
+        keep-alive-time: 5000
+        block-queue-size: 5000
+        policy: CallerRunsPolicy
+
+
+spring:
+  # 数据库配置
+  datasource:
+    # mysql
+    mysql:
+      url: jdbc:mysql://192.168.3.16:13306/ai-agent-station?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=false
+      username: root
+      password: lijiaqiang12@
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        pool-name: Mysql_Retail_HikariCP
+        minimum-idle: 15 #最小空闲连接数量
+        idle-timeout: 180000 #空闲连接存活最大时间，默认600000（10分钟）
+        maximum-pool-size: 25 #连接池最大连接数，默认是10
+        auto-commit: true  #此属性控制从池返回的连接的默认自动提交行为,默认值：true
+        max-lifetime: 1800000 #此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+        connection-timeout: 30000 #数据库连接超时时间,默认30秒，即30000
+        connection-test-query: SELECT 1
+    # postgresql
+    pgvector:
+      username: jasonlat
+      password: lijiaqiang12@
+      url: jdbc:postgresql://192.168.3.16:15432/postgres
+      driver-class-name: org.postgresql.Driver
+      hikari:
+        pool-name: PgVector_Retail_HikariCP
+        minimum-idle: 2 #最小空闲连接数量
+        idle-timeout: 30000 #空闲连接存活最大时间，默认600000（10分钟）
+        maximum-pool-size: 5 #连接池最大连接数，默认是10
+        connection-timeout: 30000 #数据库连接超时时间,默认30秒，即30000
+  #  ai:
+  #    agent:
+  #      auto-config:
+  #        enabled: true
+  #        client-ids: 3101,3102,3103,3104, 4101,4102,4103,4104,5101,5102,5103,5104
+  #    openai:
+  #      base-url: https://dashscope.aliyuncs.com/compatible-mode  # qwen3
+  #      api-key: sk-382688e6c9184dea8715dfbfdb241355  # qwen3
+  #      vector-table-name: vector_store_openai
+  #      chat:
+  #        options:
+  #          model: qwen3-max
+  #    ollama:
+  #      base-url: http://192.168.3.16:11434
+  #      chat:
+  #        options:
+  #          model: qwen3:14B
+  #      embedding-model: nomic-embed-text
+  #      vector-table-name: vector_store_ollama_deepseek
+  #      # 向量模型
+  #      embedding:
+  #        options:
+  #          # 配置模型处理的批量大小，这里设置为512。表示模型一次可以处理 512 个文本片段的嵌入请求
+  #          num-batch: 768
+  #    zhipuai:
+  #      vector-table-name: vector_store_zhipuai
+  #      image:
+  #        base-url: https://open.bigmodel.cn/api/paas
+  #        api-key: c3e3912426c49a7b990280b1d2d235a3.tcgJOlShzn6ba6uk
+  #        options:
+  #          model: GLM-4V-Flash
+  #      chat:
+  #        api-key: c3e3912426c49a7b990280b1d2d235a3.tcgJOlShzn6ba6uk
+  #        base-url: https://open.bigmodel.cn/api/paas
+  #        options:
+  #          model: GLM-4.7-Flash #
+  #          temperature: 0.7  # 设置温度参数
+  #      embedding:
+  #        options:
+  #          dimensions: 1024
+  #          model: embedding-3
+
+  # Spring 配置；rabbitmq
+  rabbitmq:
+    addresses: 192.168.3.16
+    port: 5672
+    username: jasonlat
+    password: lijiaqiang12@
+    listener:
+      simple:
+        prefetch: 1 # 每次投递n个消息，消费完在投递n个
+    topic:
+      activity_sku_stock_zero: activity_sku_stock_zero
+jq1024:
+  cc:
+    # redisson 配置
+    redisson:
+      host: 192.168.3.16
+      port: 16379
+      password: lijiaqiang12@
+      database: 0
+      pool-size: 10
+      min-idle-size: 5
+      idle-timeout: 30000
+      connect-timeout: 5000
+      retry-attempts: 3
+      retry-interval: 1000
+      ping-interval: 60000
+      keep-alive: true
+    # jwt token 配置
+    jwt:
+      issuer: ccf@guida_ljq_pwb
+      ttl: 86_400_000
+      secret-key: ccf@guida_ljq_pwb
+
+
+  # 日志
+logging:
+  level:
+    root: info
+  config: classpath:logback-spring.xml

@@ -1,0 +1,6 @@
+#file: noinspection SpringBootApplicationYaml
+spring:
+  config:
+    name: ai-agent-scaffold-code-app
+  profiles:
+    active: dev
