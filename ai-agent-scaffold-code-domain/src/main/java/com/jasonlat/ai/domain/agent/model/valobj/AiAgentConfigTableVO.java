@@ -1,0 +1,142 @@
+package com.jasonlat.ai.domain.agent.model.valobj;
+
+import lombok.Data;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author jasonlat
+ * 2026-03-31  19:23
+ */
+@Data
+public class AiAgentConfigTableVO {
+
+    /** 应用名称 */
+    private String appName;
+
+    /** 智能体基本属性配置 */
+    private Agent agent;
+
+    /** 智能体模块 */
+    private Module module;
+
+    @Data
+    public static class Agent {
+
+        /** 智能体ID */
+        private String agentId;
+
+        /** 智能体名称 */
+        private String agentName;
+
+        /** 智能体描述 */
+        private String agentDesc;
+
+    }
+
+    @Data
+    public static class Module {
+
+        /** AI API 配置 */
+        private AiApi aiApi;
+
+        /**
+         * 智能体对话模型配置
+         */
+        private ChatModel chatModel;
+
+        /** 智能体 */
+        private List<Agent> agents;
+
+        /** 智能体编排配置 */
+        private List<AgentWorkflow> agentWorkflows;
+
+        @Data
+        public static class AiApi {
+            private String baseUrl;
+            private String apiKey;
+            private String completionsPath = "/v1/chat/completions";
+            private String embeddingsPath = "/v1/embeddings";
+
+        }
+
+        @Data
+        public static class Agent {
+            /** 名称 */
+            private String name;
+            /** 智能体指令 */
+            private String instruction;
+            /** 描述 */
+            private String description;
+            /** 输出参数 */
+            private String outputKey;
+        }
+
+        @Data
+        public static class AgentWorkflow {
+            /** 类型；loop、parallel、sequential */
+            private String type;
+            /** 名称 */
+            private String name;
+            /** 子智能体 */
+            private List<String> subAgents;
+            /** 描述 */
+            private String description;
+            /** 最大迭代次数 */
+            private Integer maxIterations = 3;
+
+        }
+
+        @Data
+        public static class ChatModel {
+            /** 模型名称 */
+            private String model;
+            /** mcp列表 */
+            private List<ToolMcp> toolMcpList;
+
+            @Data
+            public static class ToolMcp {
+                /** SSE服务参数 */
+                private SSEServerParameters sse;
+                /** stdio服务参数 */
+                private StdioServerParameters stdio;
+
+                @Data
+                public static class SSEServerParameters {
+                    /** 服务名称 */
+                    private String name;
+                    /** 服务地址 */
+                    private String baseUri;
+                    /** SSE服务端点 */
+                    private String sseEndpoint;
+                    /** 请求超时时间 */
+                    private Integer requestTimeout = 3000;
+
+                }
+
+                @Data
+                public static class StdioServerParameters {
+                    /** 服务名称 */
+                    private String name;
+                    /** 请求超时时间 */
+                    private Integer requestTimeout = 3000;
+                    /** 服务参数 */
+                    private ServerParameters serverParameters;
+
+                    @Data
+                    public static class ServerParameters {
+                        /** 命令 */
+                        private String command;
+                        /** 参数 */
+                        private List<String> args;
+                        /** 环境变量 */
+                        private Map<String, String> env;
+
+                    }
+                }
+
+            }
+        }
+    }
+}

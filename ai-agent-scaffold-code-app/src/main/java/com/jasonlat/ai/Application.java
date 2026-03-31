@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configurable
 @EnableScheduling
 @SpringBootApplication
-@MapperScan("com.jasonlat.infrastructure.dao")
+@MapperScan("com.jasonlat.ai.infrastructure.dao")
 @ComponentScan(basePackages = {"com.jasonlat", "cc.jq1024.middleware"})
 public class Application {
 

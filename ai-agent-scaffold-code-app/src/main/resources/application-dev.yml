@@ -31,6 +31,10 @@ thread:
 
 
 spring:
+  config:
+    # 配置自定义的 agent yml配置文件
+    import:
+      - classpath:agent/test-agent.yml
   # 数据库配置
   datasource:
     # mysql

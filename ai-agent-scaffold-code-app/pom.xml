@@ -55,11 +55,6 @@
         </dependency>
 
         <dependency>
-            <groupId></groupId>
-            <artifactId>langch</artifactId>
-        </dependency>
-
-        <dependency>
         <!--  这个依赖被定义在了 spring-ai-bom 里，里面有和opanai, ollama等结合的依赖 -->
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-openai</artifactId>
