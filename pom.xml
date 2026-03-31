@@ -256,6 +256,12 @@
                 <scope>compile</scope>
             </dependency>
 
+            <dependency>
+                <groupId>com.jasonlat.dot</groupId>
+                <artifactId>jasonlat-wrench-starter-design-framework</artifactId>
+                <version>1.0</version>
+            </dependency>
+
             <!-- 工程模块 -->
             <dependency>
                 <groupId>com.jasonlat.ai</groupId>
