@@ -1,10 +1,12 @@
 package com.jasonlat.ai.domain.agent.service.amory.node;
 
 import com.jasonlat.ai.domain.agent.model.entity.AmoryCommandEntity;
+import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.jasonlat.ai.domain.agent.service.amory.AbstractAmorySupport;
 import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultAmoryFactory;
 import com.jasonlat.design.framework.tree.StrategyHandler;
+import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.stereotype.Service;
 
 /**
@@ -46,6 +48,19 @@ public class AiApiNode extends AbstractAmorySupport {
     @Override
     protected AiAgentRegisterVO doApply(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
         // 编写api实例化的操作
+        AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
+        AiAgentConfigTableVO.Module.AiApi aiApiConfig = aiAgentConfigTableVO.getModule().getAiApi();
+
+        OpenAiApi openAiApi = OpenAiApi.builder()
+                .baseUrl(aiApiConfig.getBaseUrl())
+                .apiKey(aiApiConfig.getApiKey())
+                .completionsPath(aiApiConfig.getCompletionsPath())
+                .embeddingsPath(aiApiConfig.getEmbeddingsPath())
+                .build();
+        // 填充 openAiApi 到动态上下文, 用于后续使用
+        dynamicContext.setOpenAiApi(openAiApi);
+
+        // 路由到下一个节点，如不需要路由 可以直接返回结果
         return router(requestParameter, dynamicContext);
     }
 }
