@@ -20,8 +20,8 @@ ai:
               tool-mcp-list:
                 - sse:
                     name: baidu-search
-                    base-uri: http://appbuilder.baidu.com/v2/ai_search/mcp/
-                    sse-endpoint: sse?api_key=xxx
+                    base-uri: http://appbuilder.baidu.com/
+                    sse-endpoint: v2/ai_search/mcp/sse?api_key=xxx
                     request-timeout: 5000
             agents:
               - name: CodeWriterAgent

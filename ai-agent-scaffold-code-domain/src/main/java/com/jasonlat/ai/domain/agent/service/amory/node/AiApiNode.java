@@ -6,6 +6,9 @@ import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.jasonlat.ai.domain.agent.service.amory.AbstractAmorySupport;
 import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultAmoryFactory;
 import com.jasonlat.design.framework.tree.StrategyHandler;
+import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AiApiNode extends AbstractAmorySupport {
+
+    private static final Logger log = LoggerFactory.getLogger(AiApiNode.class);
+    @Resource
+    private ChatModelNode chatModelNode;
+
     /**
      * 获取待执行的策略处理器
      * <p>
@@ -30,7 +38,7 @@ public class AiApiNode extends AbstractAmorySupport {
      */
     @Override
     public StrategyHandler<AmoryCommandEntity, DefaultAmoryFactory.DynamicContext, AiAgentRegisterVO> get(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
-        return super.get(requestParameter, dynamicContext);
+        return chatModelNode;
     }
 
     /**
@@ -47,6 +55,7 @@ public class AiApiNode extends AbstractAmorySupport {
      */
     @Override
     protected AiAgentRegisterVO doApply(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
+        log.info("Ai Agent 装配操作 - AiApiNode");
         // 编写api实例化的操作
         AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
         AiAgentConfigTableVO.Module.AiApi aiApiConfig = aiAgentConfigTableVO.getModule().getAiApi();
