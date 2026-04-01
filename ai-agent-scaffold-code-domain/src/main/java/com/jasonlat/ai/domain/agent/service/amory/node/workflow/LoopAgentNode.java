@@ -1,5 +1,7 @@
 package com.jasonlat.ai.domain.agent.service.amory.node.workflow;
 
+import com.google.adk.agents.BaseAgent;
+import com.google.adk.agents.LoopAgent;
 import com.jasonlat.ai.domain.agent.model.entity.AmoryCommandEntity;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
@@ -7,6 +9,8 @@ import com.jasonlat.ai.domain.agent.model.valobj.enums.AgentTypeEnum;
 import com.jasonlat.ai.domain.agent.service.amory.AbstractAmorySupport;
 import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultAmoryFactory;
 import com.jasonlat.design.framework.tree.StrategyHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +21,8 @@ import java.util.List;
  */
 @Service("loopAgentNode")
 public class LoopAgentNode extends AbstractAmorySupport {
+    private static final Logger log = LoggerFactory.getLogger(LoopAgentNode.class);
+
     /**
      * 业务流程处理方法
      * <p>
@@ -31,7 +37,24 @@ public class LoopAgentNode extends AbstractAmorySupport {
      */
     @Override
     protected AiAgentRegisterVO doApply(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
-        return null;
+        log.info("Ai Agent 配置操作 - LoopAgentNode");
+
+        List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
+        AiAgentConfigTableVO.Module.AgentWorkflow loopAgentConfig = agentWorkflows.remove(0);
+
+        List<String> subAgentNames = loopAgentConfig.getSubAgents();
+        List<BaseAgent> subAgents = dynamicContext.queryAgentsByName(subAgentNames);
+
+        LoopAgent loopAgent =
+                LoopAgent.builder()
+                        .name(loopAgentConfig.getName())
+                        .description(loopAgentConfig.getDescription())
+                        .subAgents(subAgents)
+                        .maxIterations(loopAgentConfig.getMaxIterations()) // 最大迭代次数
+                        .build();
+
+        dynamicContext.getAgentGroup().put(loopAgentConfig.getName(), loopAgent);
+        return router(requestParameter, dynamicContext);
     }
 
     /**

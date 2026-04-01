@@ -10,10 +10,7 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author jasonlat
@@ -52,6 +49,16 @@ public class DefaultAmoryFactory {
         @SuppressWarnings("unchecked")
         public <T> T getValue(String key) {
             return (T) dataObjects.get(key);
+        }
+
+        public List<BaseAgent> queryAgentsByName(List<String> agentNames) {
+            if (agentNames == null || agentNames.isEmpty() || agentGroup.keySet().isEmpty()) {
+                return Collections.emptyList();
+            }
+            return agentNames.stream()
+                    .map(agentGroup::get)
+                    .filter(Objects::nonNull)
+                    .toList();
         }
     }
 }
