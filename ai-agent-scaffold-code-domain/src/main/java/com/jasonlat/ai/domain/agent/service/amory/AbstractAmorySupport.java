@@ -1,8 +1,8 @@
 package com.jasonlat.ai.domain.agent.service.amory;
 
-import com.jasonlat.ai.domain.agent.model.entity.AmoryCommandEntity;
+import com.jasonlat.ai.domain.agent.model.entity.ArmoryCommandEntity;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
-import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultAmoryFactory;
+import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultArmoryFactory;
 import com.jasonlat.ai.types.utils.BeanUtils;
 import com.jasonlat.design.framework.tree.AbstractMultiThreadStrategyRouter;
 import jakarta.annotation.Resource;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
  * 2026-03-31  20:33
  */
 
-public abstract class AbstractAmorySupport extends AbstractMultiThreadStrategyRouter<AmoryCommandEntity, DefaultAmoryFactory.DynamicContext, AiAgentRegisterVO> {
+public abstract class AbstractAmorySupport extends AbstractMultiThreadStrategyRouter<ArmoryCommandEntity, DefaultArmoryFactory.DynamicContext, AiAgentRegisterVO> {
 
     @Resource
     protected BeanUtils beanUtils;
@@ -35,7 +35,7 @@ public abstract class AbstractAmorySupport extends AbstractMultiThreadStrategyRo
      * @throws TimeoutException     超时异常
      */
     @Override
-    protected void multiThread(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws ExecutionException, InterruptedException, TimeoutException {
+    protected void multiThread(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws ExecutionException, InterruptedException, TimeoutException {
 
     }
 }

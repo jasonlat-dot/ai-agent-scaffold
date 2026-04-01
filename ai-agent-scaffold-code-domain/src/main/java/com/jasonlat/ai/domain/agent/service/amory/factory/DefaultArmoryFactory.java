@@ -2,8 +2,12 @@ package com.jasonlat.ai.domain.agent.service.amory.factory;
 
 import com.google.adk.agents.BaseAgent;
 import com.google.adk.agents.SequentialAgent;
+import com.jasonlat.ai.domain.agent.model.entity.ArmoryCommandEntity;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
-import com.jasonlat.ai.domain.agent.service.amory.node.workflow.SequentialAgentNode;
+import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
+import com.jasonlat.ai.domain.agent.service.amory.node.RootNode;
+import com.jasonlat.design.framework.tree.StrategyHandler;
+import jakarta.annotation.Resource;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +23,14 @@ import java.util.*;
  * 2026-03-31  20:52
  */
 @Component
-public class DefaultAmoryFactory {
+public class DefaultArmoryFactory {
+
+    @Resource
+    private RootNode rootNode;
+
+    public StrategyHandler<ArmoryCommandEntity, DynamicContext, AiAgentRegisterVO> armoryStrategyHandler() {
+        return rootNode;
+    }
 
     /**
      * 动态上下文

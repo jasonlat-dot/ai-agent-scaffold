@@ -1,10 +1,10 @@
 package com.jasonlat.ai.domain.agent.service.amory.node;
 
-import com.jasonlat.ai.domain.agent.model.entity.AmoryCommandEntity;
+import com.jasonlat.ai.domain.agent.model.entity.ArmoryCommandEntity;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.jasonlat.ai.domain.agent.service.amory.AbstractAmorySupport;
-import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultAmoryFactory;
+import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultArmoryFactory;
 import com.jasonlat.design.framework.tree.StrategyHandler;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class RootNode extends AbstractAmorySupport {
      * @throws Exception 策略选择过程中可能抛出的异常
      */
     @Override
-    public StrategyHandler<AmoryCommandEntity, DefaultAmoryFactory.DynamicContext, AiAgentRegisterVO> get(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
+    public StrategyHandler<ArmoryCommandEntity, DefaultArmoryFactory.DynamicContext, AiAgentRegisterVO> get(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
         return aiApiNode;
     }
 
@@ -50,9 +50,8 @@ public class RootNode extends AbstractAmorySupport {
      * @throws Exception 处理过程中可能抛出的异常
      */
     @Override
-    protected AiAgentRegisterVO doApply(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
-        AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
-
+    protected AiAgentRegisterVO doApply(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
+        // 路由到下一个节点
         return router(requestParameter, dynamicContext);
     }
 }

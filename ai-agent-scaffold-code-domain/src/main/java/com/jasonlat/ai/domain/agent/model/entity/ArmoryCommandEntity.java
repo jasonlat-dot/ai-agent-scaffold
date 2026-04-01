@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AmoryCommandEntity {
+public class ArmoryCommandEntity {
 
     private AiAgentConfigTableVO aiAgentConfigTableVO;
 }

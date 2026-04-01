@@ -2,12 +2,12 @@ package com.jasonlat.ai.domain.agent.service.amory.node.workflow;
 
 import com.google.adk.agents.BaseAgent;
 import com.google.adk.agents.LoopAgent;
-import com.jasonlat.ai.domain.agent.model.entity.AmoryCommandEntity;
+import com.jasonlat.ai.domain.agent.model.entity.ArmoryCommandEntity;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.jasonlat.ai.domain.agent.model.valobj.enums.AgentTypeEnum;
 import com.jasonlat.ai.domain.agent.service.amory.AbstractAmorySupport;
-import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultAmoryFactory;
+import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultArmoryFactory;
 import com.jasonlat.design.framework.tree.StrategyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class LoopAgentNode extends AbstractAmorySupport {
      * @throws Exception 处理过程中可能抛出的异常
      */
     @Override
-    protected AiAgentRegisterVO doApply(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
+    protected AiAgentRegisterVO doApply(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
         log.info("Ai Agent 配置操作 - LoopAgentNode");
 
         List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
@@ -70,7 +70,7 @@ public class LoopAgentNode extends AbstractAmorySupport {
      * @throws Exception 策略选择过程中可能抛出的异常
      */
     @Override
-    public StrategyHandler<AmoryCommandEntity, DefaultAmoryFactory.DynamicContext, AiAgentRegisterVO> get(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
+    public StrategyHandler<ArmoryCommandEntity, DefaultArmoryFactory.DynamicContext, AiAgentRegisterVO> get(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
         List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
         if (null == agentWorkflows || agentWorkflows.isEmpty()) {
             return defaultStrategyHandler;

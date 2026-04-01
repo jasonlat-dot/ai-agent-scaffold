@@ -2,6 +2,7 @@ package com.jasonlat.ai.domain.agent.model.valobj;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +94,7 @@ public class AiAgentConfigTableVO {
             /** 模型名称 */
             private String model;
             /** mcp列表 */
-            private List<ToolMcp> toolMcpList;
+            private List<ToolMcp> toolMcpList = new ArrayList<>(4);
 
             @Data
             public static class ToolMcp {

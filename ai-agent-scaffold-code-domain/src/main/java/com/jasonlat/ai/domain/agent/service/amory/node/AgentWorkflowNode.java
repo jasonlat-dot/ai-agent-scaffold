@@ -1,11 +1,11 @@
 package com.jasonlat.ai.domain.agent.service.amory.node;
 
-import com.jasonlat.ai.domain.agent.model.entity.AmoryCommandEntity;
+import com.jasonlat.ai.domain.agent.model.entity.ArmoryCommandEntity;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.jasonlat.ai.domain.agent.model.valobj.enums.AgentTypeEnum;
 import com.jasonlat.ai.domain.agent.service.amory.AbstractAmorySupport;
-import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultAmoryFactory;
+import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultArmoryFactory;
 import com.jasonlat.ai.domain.agent.service.amory.node.workflow.LoopAgentNode;
 import com.jasonlat.ai.domain.agent.service.amory.node.workflow.ParallelAgentNode;
 import com.jasonlat.ai.domain.agent.service.amory.node.workflow.SequentialAgentNode;
@@ -46,7 +46,7 @@ public class AgentWorkflowNode extends AbstractAmorySupport {
      * @throws Exception 处理过程中可能抛出的异常
      */
     @Override
-    protected AiAgentRegisterVO doApply(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
+    protected AiAgentRegisterVO doApply(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
         log.info("Ai Agent 配置操作 - AgentWorkflowNode");
         AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
         List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = aiAgentConfigTableVO.getModule().getAgentWorkflows();
@@ -71,7 +71,7 @@ public class AgentWorkflowNode extends AbstractAmorySupport {
      * @throws Exception 策略选择过程中可能抛出的异常
      */
     @Override
-    public StrategyHandler<AmoryCommandEntity, DefaultAmoryFactory.DynamicContext, AiAgentRegisterVO> get(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
+    public StrategyHandler<ArmoryCommandEntity, DefaultArmoryFactory.DynamicContext, AiAgentRegisterVO> get(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
         List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
         AiAgentConfigTableVO.Module.AgentWorkflow agentWorkflow = agentWorkflows.get(0);
         String agentType = agentWorkflow.getType();

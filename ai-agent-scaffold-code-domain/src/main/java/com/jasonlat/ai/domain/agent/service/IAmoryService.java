@@ -15,5 +15,5 @@ public interface IAmoryService {
      * 接收智能体
      * @param tables 智能体配置
      */
-    void acceptArmoryAgents(List<AiAgentConfigTableVO> tables);
+    void acceptArmoryAgents(List<AiAgentConfigTableVO> tables) throws Exception;
 }
