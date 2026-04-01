@@ -1,5 +1,6 @@
 package com.jasonlat.ai.domain.agent.service.amory.factory;
 
+import com.google.adk.agents.BaseAgent;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +34,9 @@ public class DefaultAmoryFactory {
 
         /** LLM chatModel */
         private ChatModel chatModel;
+
+        /** 智能体配置组 */
+        private Map<String, BaseAgent> agentGroup = new HashMap<>(8);
 
         private Map<String, Object> dataObjects = new HashMap<>();
 

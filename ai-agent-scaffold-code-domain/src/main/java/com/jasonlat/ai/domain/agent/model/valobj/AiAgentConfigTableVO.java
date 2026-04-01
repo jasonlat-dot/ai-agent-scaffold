@@ -16,13 +16,13 @@ public class AiAgentConfigTableVO {
     private String appName;
 
     /** 智能体基本属性配置 */
-    private Agent agent;
+    private AgentDefinition  agentDefinition;
 
     /** 智能体模块 */
     private Module module;
 
     @Data
-    public static class Agent {
+    public static class AgentDefinition  {
 
         /** 智能体ID */
         private String agentId;

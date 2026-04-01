@@ -14,6 +14,7 @@ import io.modelcontextprotocol.client.transport.ServerParameters;
 import io.modelcontextprotocol.client.transport.StdioClientTransport;
 import io.modelcontextprotocol.json.jackson.JacksonMcpJsonMapper;
 import io.modelcontextprotocol.spec.McpSchema;
+import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,11 @@ import java.util.List;
  */
 @Service
 public class ChatModelNode extends AbstractAmorySupport {
+
     private static final Logger log = LoggerFactory.getLogger(ChatModelNode.class);
+
+    @Resource
+    private AgentNode agentNode;
 
     /**
      * 业务流程处理方法
@@ -94,7 +99,7 @@ public class ChatModelNode extends AbstractAmorySupport {
      */
     @Override
     public StrategyHandler<AmoryCommandEntity, DefaultAmoryFactory.DynamicContext, AiAgentRegisterVO> get(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
-        return super.get(requestParameter, dynamicContext);
+        return agentNode;
     }
 
     private McpSyncClient createMcpSyncClient(AiAgentConfigTableVO.Module.ChatModel.ToolMcp toolMcp) throws Exception {
