@@ -1,33 +1,24 @@
-package com.jasonlat.ai.domain.agent.service.amory.node.workflow;
+package com.jasonlat.ai.domain.agent.service.amory.node;
 
-import com.google.adk.agents.BaseAgent;
-import com.google.adk.agents.ParallelAgent;
 import com.google.adk.agents.SequentialAgent;
+import com.google.adk.runner.InMemoryRunner;
 import com.jasonlat.ai.domain.agent.model.entity.AmoryCommandEntity;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.jasonlat.ai.domain.agent.service.amory.AbstractAmorySupport;
 import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultAmoryFactory;
-import com.jasonlat.ai.domain.agent.service.amory.node.RunnerNode;
 import com.jasonlat.design.framework.tree.StrategyHandler;
-import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
  * @author jasonlat
- * 2026-04-01  20:13
+ * 2026-04-01  21:25
  */
-@Service("sequentialAgentNode")
-public class SequentialAgentNode extends AbstractAmorySupport {
-
-    private static final Logger log = LoggerFactory.getLogger(SequentialAgentNode.class);
-
-    @Resource
-    private RunnerNode runnerNode;
+@Service
+public class RunnerNode extends AbstractAmorySupport {
+    private static final Logger log = LoggerFactory.getLogger(RunnerNode.class);
 
     /**
      * 业务流程处理方法
@@ -43,26 +34,31 @@ public class SequentialAgentNode extends AbstractAmorySupport {
      */
     @Override
     protected AiAgentRegisterVO doApply(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
-        log.info("Ai Agent 配置操作 - SequentialAgentNode");
+        log.info("Ai Agent 配置操作 - RunnerNode");
 
-        List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
-        AiAgentConfigTableVO.Module.AgentWorkflow sequentialAgentConfig = agentWorkflows.remove(0);
+        AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
 
-        List<String> subAgentNames = sequentialAgentConfig.getSubAgents();
-        List<BaseAgent> subAgents = dynamicContext.queryAgentsByName(subAgentNames);
+        String appName = aiAgentConfigTableVO.getAppName();
+        AiAgentConfigTableVO.AgentDefinition agentDefinition = aiAgentConfigTableVO.getAgentDefinition();
+        String agentId = agentDefinition.getAgentId();
+        String agentDesc = agentDefinition.getAgentDesc();
+        String agentName = agentDefinition.getAgentName();
 
-        SequentialAgent sequentialAgent =
-                SequentialAgent.builder()
-                        .name(sequentialAgentConfig.getName())
-                        .description(sequentialAgentConfig.getDescription())
-                        .subAgents(subAgents)
-                        .build();
+        // 获取上下文对象
+        SequentialAgent sequentialAgent = dynamicContext.getSequentialAgent();
+        InMemoryRunner inMemoryRunner = new InMemoryRunner(sequentialAgent, appName);
 
-        dynamicContext.setSequentialAgent(sequentialAgent);
-        dynamicContext.getAgentGroup().put(sequentialAgentConfig.getName(), sequentialAgent);
-        // 注册到spring容器
-        beanUtils.registerBean(sequentialAgentConfig.getName(), SequentialAgent.class, sequentialAgent);
-        return router(requestParameter, dynamicContext);
+        AiAgentRegisterVO aiAgentRegisterVO = AiAgentRegisterVO.builder()
+                .appName(appName)
+                .agentName(agentName)
+                .agentId(agentId)
+                .agentDesc(agentDesc)
+                .runner(inMemoryRunner)
+                .build();
+
+        // 注册到Spring容器
+        beanUtils.registerBean(agentId, AiAgentRegisterVO.class, aiAgentRegisterVO);
+        return aiAgentRegisterVO;
     }
 
     /**
@@ -79,6 +75,6 @@ public class SequentialAgentNode extends AbstractAmorySupport {
      */
     @Override
     public StrategyHandler<AmoryCommandEntity, DefaultAmoryFactory.DynamicContext, AiAgentRegisterVO> get(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
-        return runnerNode;
+        return super.get(requestParameter, dynamicContext);
     }
 }

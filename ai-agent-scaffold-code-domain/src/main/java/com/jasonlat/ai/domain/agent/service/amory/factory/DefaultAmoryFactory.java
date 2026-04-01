@@ -1,7 +1,9 @@
 package com.jasonlat.ai.domain.agent.service.amory.factory;
 
 import com.google.adk.agents.BaseAgent;
+import com.google.adk.agents.SequentialAgent;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
+import com.jasonlat.ai.domain.agent.service.amory.node.workflow.SequentialAgentNode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +29,9 @@ public class DefaultAmoryFactory {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class DynamicContext {
+
+        /** 智能体工作流节点 */
+        private SequentialAgent sequentialAgent;
 
         /** LLM Api */
         private OpenAiApi openAiApi;
