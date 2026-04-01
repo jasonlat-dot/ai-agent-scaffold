@@ -3,7 +3,9 @@ package com.jasonlat.ai.domain.agent.service.amory;
 import com.jasonlat.ai.domain.agent.model.entity.AmoryCommandEntity;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultAmoryFactory;
+import com.jasonlat.ai.types.utils.BeanUtils;
 import com.jasonlat.design.framework.tree.AbstractMultiThreadStrategyRouter;
+import jakarta.annotation.Resource;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -15,6 +17,9 @@ import java.util.concurrent.TimeoutException;
  */
 
 public abstract class AbstractAmorySupport extends AbstractMultiThreadStrategyRouter<AmoryCommandEntity, DefaultAmoryFactory.DynamicContext, AiAgentRegisterVO> {
+
+    @Resource
+    protected BeanUtils beanUtils;
 
     /**
      * 多线程异步数据加载方法

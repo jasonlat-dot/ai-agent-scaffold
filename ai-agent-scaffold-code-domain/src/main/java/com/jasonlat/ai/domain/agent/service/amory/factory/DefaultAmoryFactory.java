@@ -10,7 +10,9 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +39,9 @@ public class DefaultAmoryFactory {
 
         /** 智能体配置组 */
         private Map<String, BaseAgent> agentGroup = new HashMap<>(8);
+
+        /** 智能体工作流组 */
+        private List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = new ArrayList<>(8);
 
         private Map<String, Object> dataObjects = new HashMap<>();
 

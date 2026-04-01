@@ -1,33 +1,22 @@
-package com.jasonlat.ai.domain.agent.service.amory.node;
+package com.jasonlat.ai.domain.agent.service.amory.node.workflow;
 
-import com.google.adk.agents.LlmAgent;
-import com.google.adk.models.springai.SpringAI;
 import com.jasonlat.ai.domain.agent.model.entity.AmoryCommandEntity;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
+import com.jasonlat.ai.domain.agent.model.valobj.enums.AgentTypeEnum;
 import com.jasonlat.ai.domain.agent.service.amory.AbstractAmorySupport;
 import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultAmoryFactory;
 import com.jasonlat.design.framework.tree.StrategyHandler;
-import jakarta.annotation.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * @author jasonlat
- * 2026-04-01  19:25
+ * 2026-04-01  20:12
  */
-@Service
-public class AgentNode extends AbstractAmorySupport {
-
-    private static final Logger log = LoggerFactory.getLogger(AgentNode.class);
-
-    @Resource
-    private AgentWorkflowNode agentWorkflowNode;
-
+@Service("loopAgentNode")
+public class LoopAgentNode extends AbstractAmorySupport {
     /**
      * 业务流程处理方法
      * <p>
@@ -42,24 +31,7 @@ public class AgentNode extends AbstractAmorySupport {
      */
     @Override
     protected AiAgentRegisterVO doApply(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
-        log.info("Ai Agent 配置操作 - AgentNode");
-
-        ChatModel chatModel = dynamicContext.getChatModel();
-        AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
-        List<AiAgentConfigTableVO.Module.Agent> agentsConfig = aiAgentConfigTableVO.getModule().getAgents();
-        agentsConfig.forEach(agentConfig -> {
-            LlmAgent llmAgent = LlmAgent.builder()
-                    .name(agentConfig.getName())
-                    .model(new SpringAI(chatModel))
-                    .description(agentConfig.getDescription())
-                    .instruction(agentConfig.getInstruction())
-                    .outputKey(agentConfig.getOutputKey())
-                    .build();
-
-            dynamicContext.getAgentGroup().put(agentConfig.getName(), llmAgent);
-        });
-
-        return router(requestParameter, dynamicContext);
+        return null;
     }
 
     /**
@@ -76,6 +48,18 @@ public class AgentNode extends AbstractAmorySupport {
      */
     @Override
     public StrategyHandler<AmoryCommandEntity, DefaultAmoryFactory.DynamicContext, AiAgentRegisterVO> get(AmoryCommandEntity requestParameter, DefaultAmoryFactory.DynamicContext dynamicContext) throws Exception {
-        return agentWorkflowNode;
+        List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
+        if (null == agentWorkflows || agentWorkflows.isEmpty()) {
+            return defaultStrategyHandler;
+        }
+        AiAgentConfigTableVO.Module.AgentWorkflow agentWorkflow = agentWorkflows.get(0);
+        String agentType = agentWorkflow.getType();
+        AgentTypeEnum agentTypeEnum = AgentTypeEnum.formType(agentType);
+        String node = agentTypeEnum.getNode();
+        return switch (node) {
+            case "sequentialAgentNode" -> beanUtils.getBean("sequentialAgentNode");
+            case "parallelAgentNode" -> beanUtils.getBean("parallelAgentNode");
+            default -> defaultStrategyHandler;
+        };
     }
 }
