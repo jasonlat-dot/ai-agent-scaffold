@@ -43,10 +43,10 @@ public class DefaultArmoryFactory {
     public static class DynamicContext {
 
         /** LLM Api */
-        private OpenAiApi openAiApi;
+        private Map<String, OpenAiApi> openAiApiMap = new HashMap<>(8);
 
         /** LLM chatModel */
-        private ChatModel chatModel;
+        private Map<String, ChatModel> chatModelMap = new HashMap<>(8);
 
         /** 智能体配置组 */
         private Map<String, BaseAgent> agentGroup = new HashMap<>(8);
@@ -57,7 +57,7 @@ public class DefaultArmoryFactory {
         /** 当前处理的智能体工作流节点 */
         private AiAgentConfigTableVO.Module.AgentWorkflow currentAgentWorkflow;
 
-        private Map<String, Object> dataObjects = new HashMap<>();
+        private Map<String, Object> dataObjects = new HashMap<>(8);
 
         public <T> void setValue(String key, T value) {
             dataObjects.put(key, value);

@@ -18,6 +18,24 @@ import java.util.concurrent.TimeoutException;
 
 public abstract class AbstractAmorySupport extends AbstractMultiThreadStrategyRouter<ArmoryCommandEntity, DefaultArmoryFactory.DynamicContext, AiAgentRegisterVO> {
 
+    protected final static String DEFAULT_AI_API_MAP_KEY = "default_ai_api_map_key";
+
+    protected final static String DEFAULT_ChAT_MODEL_MAP_KEY = "default_chat_model_map_key";
+
+    protected String getDefaultAiApiMapKey(String appName) {
+        if (appName == null || appName.isEmpty()) {
+            throw new RuntimeException("appName cannot be null");
+        }
+        return appName + "_" + DEFAULT_AI_API_MAP_KEY;
+    }
+
+    protected String getDefaultChatModelMapKey(String appName) {
+        if (appName == null || appName.isEmpty()) {
+            throw new RuntimeException("appName cannot be null");
+        }
+        return appName + "_" + DEFAULT_ChAT_MODEL_MAP_KEY;
+    }
+
     @Resource
     protected BeanUtils beanUtils;
 

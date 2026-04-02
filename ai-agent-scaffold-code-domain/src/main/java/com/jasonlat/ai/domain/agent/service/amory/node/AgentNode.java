@@ -43,11 +43,15 @@ public class AgentNode extends AbstractAmorySupport {
     @Override
     protected AiAgentRegisterVO doApply(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
         log.info("Ai Agent 配置操作 - AgentNode");
-
-        ChatModel chatModel = dynamicContext.getChatModel();
         AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
         List<AiAgentConfigTableVO.Module.Agent> agentsConfig = aiAgentConfigTableVO.getModule().getLlmAgents();
         agentsConfig.forEach(agentConfig -> {
+
+            ChatModel chatModel = dynamicContext.getChatModelMap().get(agentConfig.getName());
+            if (chatModel == null) {
+                chatModel = dynamicContext.getChatModelMap().get(getDefaultChatModelMapKey(aiAgentConfigTableVO.getAppName()));
+            }
+
             LlmAgent llmAgent = LlmAgent.builder()
                     .name(agentConfig.getName())
                     .model(new SpringAI(chatModel))

@@ -16,6 +16,7 @@ import io.modelcontextprotocol.json.jackson.JacksonMcpJsonMapper;
 import io.modelcontextprotocol.spec.McpSchema;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.model.ChatModel;
@@ -57,20 +58,13 @@ public class ChatModelNode extends AbstractAmorySupport {
     @Override
     protected AiAgentRegisterVO doApply(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
         log.info("Ai Agent 装配操作 - ChatModelNode");
-        OpenAiApi openAiApi = dynamicContext.getOpenAiApi();
         AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
         AiAgentConfigTableVO.Module.ChatModel chatModelConfig = aiAgentConfigTableVO.getModule().getChatModel();
-
-        List<McpSyncClient> mcpSyncClients = new ArrayList<>(8);
-        chatModelConfig.getToolMcpList().forEach(toolMcp -> {
-            try {
-                McpSyncClient mcpSyncClient = createMcpSyncClient(toolMcp);
-                mcpSyncClients.add(mcpSyncClient);
-            } catch (Exception e) {
-                log.error("创建 mcpSyncClient 失败", e);
-            }
-        });
-
+        // 获取默认配置的 openAiApi
+        OpenAiApi openAiApi = dynamicContext.getOpenAiApiMap().get(getDefaultAiApiMapKey(aiAgentConfigTableVO.getAppName()));
+        // 构建默认的 mcpSyncClient
+        List<McpSyncClient> mcpSyncClients = getMcpSyncClients(chatModelConfig);
+        // 构建默认的 chatModel
         ChatModel chatModel = OpenAiChatModel.builder()
                 .openAiApi(openAiApi)
                 .defaultOptions(OpenAiChatOptions.builder()
@@ -80,9 +74,54 @@ public class ChatModelNode extends AbstractAmorySupport {
                                 .getToolCallbacks())
                         .build())
                 .build();
-        dynamicContext.setChatModel(chatModel);
+        dynamicContext.getChatModelMap().put(getDefaultChatModelMapKey(aiAgentConfigTableVO.getAppName()), chatModel);
+
+        // 处理个性化的 chatModel
+        List<AiAgentConfigTableVO.Module.Agent> llmAgents = aiAgentConfigTableVO.getModule().getLlmAgents();
+        if (llmAgents == null || llmAgents.isEmpty()) {
+            throw new RuntimeException("module.llmAgents is empty");
+        }
+        llmAgents.forEach(llmAgent -> {
+            AiAgentConfigTableVO.Module.ChatModel llmAgentChatModelConfig = llmAgent.getChatModel();
+            if (null == llmAgentChatModelConfig) {
+                // 如果没有自定义配置的 chatModel， 则使用默认的 chatModel
+                llmAgentChatModelConfig = chatModelConfig;
+            }
+            // 获取自定义配置的 openAiApi
+            OpenAiApi llmAgentOpenAiApi = dynamicContext.getOpenAiApiMap().get(llmAgent.getName());
+            if (null == llmAgentOpenAiApi ) {
+                // 如果没有自定义配置的 openAi， 则使用默认的 openAiApi
+                llmAgentOpenAiApi = dynamicContext.getOpenAiApiMap().get(getDefaultAiApiMapKey(aiAgentConfigTableVO.getAppName()));
+            }
+            // 构建自定义的 mcpSyncClient
+            List<McpSyncClient> llmAgentMcpSyncClients = getMcpSyncClients(chatModelConfig);
+            // 构建自定义的 chatModel
+            ChatModel llmAgentChatModel = OpenAiChatModel.builder()
+                    .openAiApi(llmAgentOpenAiApi)
+                    .defaultOptions(OpenAiChatOptions.builder()
+                            .model(llmAgentChatModelConfig.getModel())
+                            .toolCallbacks(SyncMcpToolCallbackProvider.builder()
+                                    .mcpClients(llmAgentMcpSyncClients).build()
+                                    .getToolCallbacks())
+                            .build())
+                    .build();
+            dynamicContext.getChatModelMap().put(llmAgent.getName(), llmAgentChatModel);
+        });
 
         return router(requestParameter, dynamicContext);
+    }
+
+    private @NotNull List<McpSyncClient> getMcpSyncClients(AiAgentConfigTableVO.Module.ChatModel chatModelConfig) {
+        List<McpSyncClient> mcpSyncClients = new ArrayList<>(8);
+        chatModelConfig.getToolMcpList().forEach(toolMcp -> {
+            try {
+                McpSyncClient mcpSyncClient = createMcpSyncClient(toolMcp);
+                mcpSyncClients.add(mcpSyncClient);
+            } catch (Exception e) {
+                log.error("创建 mcpSyncClient 失败", e);
+            }
+        });
+        return mcpSyncClients;
     }
 
     /**

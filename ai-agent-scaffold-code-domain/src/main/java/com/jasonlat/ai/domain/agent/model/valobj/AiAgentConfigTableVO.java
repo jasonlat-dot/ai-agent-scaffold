@@ -39,13 +39,13 @@ public class AiAgentConfigTableVO {
     @Data
     public static class Module {
 
-        /** AI API 配置 */
-        private AiApi aiApi;
+        /** 默认的 AI API 配置 */
+        private AiApi aiApi = new AiApi();
 
         /**
-         * 智能体对话模型配置
+         * 默认的 智能体对话模型配置
          */
-        private ChatModel chatModel;
+        private ChatModel chatModel = new ChatModel();
 
         /** 智能体 */
         private List<Agent> llmAgents;
@@ -75,6 +75,14 @@ public class AiAgentConfigTableVO {
             private String description;
             /** 输出参数 */
             private String outputKey;
+
+            /** 自定义 - AI API 配置 可为空，不配置就取默认 */
+            private AiApi aiApi;
+
+            /**
+             * 自定义 - 智能体对话模型配置 可为空，不配置就取默认
+             */
+            private ChatModel chatModel;
         }
 
         @Data

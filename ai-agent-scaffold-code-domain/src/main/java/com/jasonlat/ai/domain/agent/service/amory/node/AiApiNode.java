@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * agent AiApi节点
  * @author jasonlat
@@ -66,8 +68,26 @@ public class AiApiNode extends AbstractAmorySupport {
                 .completionsPath(aiApiConfig.getCompletionsPath())
                 .embeddingsPath(aiApiConfig.getEmbeddingsPath())
                 .build();
-        // 填充 openAiApi 到动态上下文, 用于后续使用
-        dynamicContext.setOpenAiApi(openAiApi);
+        // 设置默认的 openAiApi
+        dynamicContext.getOpenAiApiMap().put(getDefaultAiApiMapKey(aiAgentConfigTableVO.getAppName()), openAiApi);
+
+        List<AiAgentConfigTableVO.Module.Agent> llmAgents = aiAgentConfigTableVO.getModule().getLlmAgents();
+        if (null == llmAgents || llmAgents.isEmpty()) {
+            throw new RuntimeException("module.llmAgents is empty");
+        }
+        // 处理自定义的 openAiApi
+        llmAgents.forEach(llmAgent -> {
+            AiAgentConfigTableVO.Module.AiApi llmAgentAiApiConfig = llmAgent.getAiApi();
+            if (null != llmAgentAiApiConfig) {
+                OpenAiApi llmAgentOpenAiApi = OpenAiApi.builder()
+                        .baseUrl(llmAgentAiApiConfig.getBaseUrl())
+                        .apiKey(llmAgentAiApiConfig.getApiKey())
+                        .completionsPath(llmAgentAiApiConfig.getCompletionsPath())
+                        .embeddingsPath(llmAgentAiApiConfig.getEmbeddingsPath())
+                        .build();
+                dynamicContext.getOpenAiApiMap().put(llmAgent.getName(), llmAgentOpenAiApi);
+            }
+        });
 
         // 路由到下一个节点，如不需要路由 可以直接返回结果
         return router(requestParameter, dynamicContext);
