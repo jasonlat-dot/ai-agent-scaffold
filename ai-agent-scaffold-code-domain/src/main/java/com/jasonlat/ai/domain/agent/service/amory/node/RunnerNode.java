@@ -1,5 +1,6 @@
 package com.jasonlat.ai.domain.agent.service.amory.node;
 
+import com.google.adk.agents.BaseAgent;
 import com.google.adk.agents.SequentialAgent;
 import com.google.adk.runner.InMemoryRunner;
 import com.jasonlat.ai.domain.agent.model.entity.ArmoryCommandEntity;
@@ -7,7 +8,9 @@ import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.jasonlat.ai.domain.agent.service.amory.AbstractAmorySupport;
 import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultArmoryFactory;
+import com.jasonlat.ai.types.exception.AppException;
 import com.jasonlat.design.framework.tree.StrategyHandler;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -44,9 +47,7 @@ public class RunnerNode extends AbstractAmorySupport {
         String agentDesc = agentDefinition.getAgentDesc();
         String agentName = agentDefinition.getAgentName();
 
-        // 获取上下文对象
-        SequentialAgent sequentialAgent = dynamicContext.getSequentialAgent();
-        InMemoryRunner inMemoryRunner = new InMemoryRunner(sequentialAgent, appName);
+        InMemoryRunner inMemoryRunner = getRunner(dynamicContext, aiAgentConfigTableVO, appName);
 
         AiAgentRegisterVO aiAgentRegisterVO = AiAgentRegisterVO.builder()
                 .appName(appName)
@@ -59,6 +60,17 @@ public class RunnerNode extends AbstractAmorySupport {
         // 注册到Spring容器
         beanUtils.registerBean(agentId, AiAgentRegisterVO.class, aiAgentRegisterVO);
         return aiAgentRegisterVO;
+    }
+
+    private static @NotNull InMemoryRunner getRunner(DefaultArmoryFactory.DynamicContext dynamicContext, AiAgentConfigTableVO aiAgentConfigTableVO, String appName) {
+        AiAgentConfigTableVO.Module.Runner runner = aiAgentConfigTableVO.getModule().getRunner();
+        String runnerAgentName = runner.getAgentName();
+        BaseAgent baseAgent = dynamicContext.getAgentGroup().get(runnerAgentName);
+        if (baseAgent == null) {
+            // runner.agentName 不正确
+            throw new AppException("runner.agentName is illegal");
+        }
+        return new InMemoryRunner(baseAgent, appName);
     }
 
     /**

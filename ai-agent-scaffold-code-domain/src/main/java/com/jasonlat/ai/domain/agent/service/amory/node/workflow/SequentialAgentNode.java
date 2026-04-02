@@ -57,7 +57,6 @@ public class SequentialAgentNode extends AbstractAmorySupport {
                         .subAgents(subAgents)
                         .build();
 
-        dynamicContext.setSequentialAgent(sequentialAgent);
         dynamicContext.getAgentGroup().put(sequentialAgentConfig.getName(), sequentialAgent);
         // 注册到spring容器
         beanUtils.registerBean(sequentialAgentConfig.getName(), SequentialAgent.class, sequentialAgent);

@@ -7,7 +7,7 @@ ai:
           app-name: testAgent
           agentDefinition:
             agent-id: 100001
-            agent-name:
+            agent-name: testAgent
             agent-desc: 一个测试的智能体
           module:
             # 不能为空
@@ -24,10 +24,10 @@ ai:
                 - sse:
                     name: baidu-search
                     base-uri: http://appbuilder.baidu.com/
-                    sse-endpoint: v2/ai_search/mcp/sse?api_key=bce-v3/ALTAK-aIpUGJ5kneDTSFGbEEMfL/8897e76d9294c5d01c5362daa638cb41d35f6bd8
+                    sse-endpoint: v2/ai_search/mcp/sse?api_key=bce-v3/ALTAK-wrj8IPc6KH5Z1dsynXxEW/4a9da7380443ecfe9b168c8bea5f8eb1969534d4
                     request-timeout: 30000
             # 不能为空
-            agents:
+            llm-agents:
               - name: CodeWriterAgent
                 description: Writes initial Java code based on a specification.
                 instruction: |
@@ -89,3 +89,5 @@ ai:
                   - CodeWriterAgent
                   - CodeReviewerAgent
                   - CodeRefactorerAgent
+            runner:
+              agent-name: CodePipelineAgent

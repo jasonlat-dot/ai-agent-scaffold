@@ -48,10 +48,13 @@ public class AiAgentConfigTableVO {
         private ChatModel chatModel;
 
         /** 智能体 */
-        private List<Agent> agents;
+        private List<Agent> llmAgents;
 
         /** 智能体编排配置 */
         private List<AgentWorkflow> agentWorkflows;
+
+        /** 运行器 */
+        private Runner runner;
 
         @Data
         public static class AiApi {
@@ -138,6 +141,11 @@ public class AiAgentConfigTableVO {
                 }
 
             }
+        }
+
+        @Data
+        public static class Runner {
+            private String agentName;
         }
     }
 }

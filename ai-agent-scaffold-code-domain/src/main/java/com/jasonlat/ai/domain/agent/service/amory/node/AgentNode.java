@@ -46,7 +46,7 @@ public class AgentNode extends AbstractAmorySupport {
 
         ChatModel chatModel = dynamicContext.getChatModel();
         AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
-        List<AiAgentConfigTableVO.Module.Agent> agentsConfig = aiAgentConfigTableVO.getModule().getAgents();
+        List<AiAgentConfigTableVO.Module.Agent> agentsConfig = aiAgentConfigTableVO.getModule().getLlmAgents();
         agentsConfig.forEach(agentConfig -> {
             LlmAgent llmAgent = LlmAgent.builder()
                     .name(agentConfig.getName())

@@ -80,7 +80,7 @@ public class ParallelAgentNode extends AbstractAmorySupport {
         String node = agentTypeEnum.getNode();
         return switch (node) {
             case "loopAgentNode" -> beanUtils.getBean("loopAgentNode");
-            case "parallelAgentNode" -> beanUtils.getBean("parallelAgentNode");
+            case "sequentialAgentNode" -> beanUtils.getBean("sequentialAgentNode");
             default -> defaultStrategyHandler;
         };
     }

@@ -32,6 +32,8 @@ public class AgentWorkflowNode extends AbstractAmorySupport {
     private ParallelAgentNode parallelAgentNode;
     @Resource
     private LoopAgentNode loopAgentNode;
+    @Resource
+    private RunnerNode runnerNode;
 
     /**
      * 业务流程处理方法
@@ -51,7 +53,7 @@ public class AgentWorkflowNode extends AbstractAmorySupport {
         AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
         List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = aiAgentConfigTableVO.getModule().getAgentWorkflows();
         if (null == agentWorkflows || agentWorkflows.isEmpty()) {
-            throw new RuntimeException("workflow is null!");
+            return router(requestParameter, dynamicContext);
         }
 
         dynamicContext.setAgentWorkflows(agentWorkflows);
@@ -73,6 +75,9 @@ public class AgentWorkflowNode extends AbstractAmorySupport {
     @Override
     public StrategyHandler<ArmoryCommandEntity, DefaultArmoryFactory.DynamicContext, AiAgentRegisterVO> get(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
         List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
+        if (agentWorkflows == null || agentWorkflows.isEmpty()) {
+            return runnerNode;
+        }
         AiAgentConfigTableVO.Module.AgentWorkflow agentWorkflow = agentWorkflows.get(0);
         String agentType = agentWorkflow.getType();
         AgentTypeEnum agentTypeEnum = AgentTypeEnum.formType(agentType);

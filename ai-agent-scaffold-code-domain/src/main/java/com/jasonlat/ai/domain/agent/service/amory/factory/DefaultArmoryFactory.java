@@ -41,9 +41,6 @@ public class DefaultArmoryFactory {
     @NoArgsConstructor
     public static class DynamicContext {
 
-        /** 智能体工作流节点 */
-        private SequentialAgent sequentialAgent;
-
         /** LLM Api */
         private OpenAiApi openAiApi;
 
