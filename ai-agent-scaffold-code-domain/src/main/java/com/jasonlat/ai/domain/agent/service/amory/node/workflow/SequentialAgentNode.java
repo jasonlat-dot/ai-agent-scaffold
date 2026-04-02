@@ -7,6 +7,7 @@ import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.jasonlat.ai.domain.agent.service.amory.AbstractAmorySupport;
 import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultArmoryFactory;
+import com.jasonlat.ai.domain.agent.service.amory.node.AgentWorkflowNode;
 import com.jasonlat.ai.domain.agent.service.amory.node.RunnerNode;
 import com.jasonlat.design.framework.tree.StrategyHandler;
 import jakarta.annotation.Resource;
@@ -25,8 +26,6 @@ public class SequentialAgentNode extends AbstractAmorySupport {
 
     private static final Logger log = LoggerFactory.getLogger(SequentialAgentNode.class);
 
-    @Resource
-    private RunnerNode runnerNode;
 
     /**
      * 业务流程处理方法
@@ -44,22 +43,21 @@ public class SequentialAgentNode extends AbstractAmorySupport {
     protected AiAgentRegisterVO doApply(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
         log.info("Ai Agent 配置操作 - SequentialAgentNode");
 
-        List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
-        AiAgentConfigTableVO.Module.AgentWorkflow sequentialAgentConfig = agentWorkflows.remove(0);
+        AiAgentConfigTableVO.Module.AgentWorkflow currentAgentWorkflow = dynamicContext.getCurrentAgentWorkflow();
 
-        List<String> subAgentNames = sequentialAgentConfig.getSubAgents();
+        List<String> subAgentNames = currentAgentWorkflow.getSubAgents();
         List<BaseAgent> subAgents = dynamicContext.queryAgentsByName(subAgentNames);
 
         SequentialAgent sequentialAgent =
                 SequentialAgent.builder()
-                        .name(sequentialAgentConfig.getName())
-                        .description(sequentialAgentConfig.getDescription())
+                        .name(currentAgentWorkflow.getName())
+                        .description(currentAgentWorkflow.getDescription())
                         .subAgents(subAgents)
                         .build();
 
-        dynamicContext.getAgentGroup().put(sequentialAgentConfig.getName(), sequentialAgent);
+        dynamicContext.getAgentGroup().put(currentAgentWorkflow.getName(), sequentialAgent);
         // 注册到spring容器
-        beanUtils.registerBean(sequentialAgentConfig.getName(), SequentialAgent.class, sequentialAgent);
+        beanUtils.registerBean(currentAgentWorkflow.getName(), SequentialAgent.class, sequentialAgent);
         return router(requestParameter, dynamicContext);
     }
 
@@ -77,6 +75,6 @@ public class SequentialAgentNode extends AbstractAmorySupport {
      */
     @Override
     public StrategyHandler<ArmoryCommandEntity, DefaultArmoryFactory.DynamicContext, AiAgentRegisterVO> get(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
-        return runnerNode;
+        return beanUtils.getBean("agentWorkflowNode", AgentWorkflowNode.class);
     }
 }

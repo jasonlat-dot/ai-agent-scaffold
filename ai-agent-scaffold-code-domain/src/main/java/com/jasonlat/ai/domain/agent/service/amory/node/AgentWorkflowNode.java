@@ -52,11 +52,17 @@ public class AgentWorkflowNode extends AbstractAmorySupport {
         log.info("Ai Agent 配置操作 - AgentWorkflowNode");
         AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
         List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = aiAgentConfigTableVO.getModule().getAgentWorkflows();
-        if (null == agentWorkflows || agentWorkflows.isEmpty()) {
+
+        if (null == agentWorkflows || agentWorkflows.isEmpty() || dynamicContext.getCurrentStepIndex() >= agentWorkflows.size()) {
+            // 清空当前流程节点
+            dynamicContext.setCurrentAgentWorkflow(null);
             return router(requestParameter, dynamicContext);
         }
+        // 设置当前处理的流程接节点
+        dynamicContext.setCurrentAgentWorkflow(agentWorkflows.get(dynamicContext.getCurrentStepIndex()));
+        // 步骤值增加
+        dynamicContext.addCurrentStepIndex();
 
-        dynamicContext.setAgentWorkflows(agentWorkflows);
         return router(requestParameter, dynamicContext);
     }
 
@@ -74,19 +80,21 @@ public class AgentWorkflowNode extends AbstractAmorySupport {
      */
     @Override
     public StrategyHandler<ArmoryCommandEntity, DefaultArmoryFactory.DynamicContext, AiAgentRegisterVO> get(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
-        List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
-        if (agentWorkflows == null || agentWorkflows.isEmpty()) {
+        AiAgentConfigTableVO.Module.AgentWorkflow currentAgentWorkflow = dynamicContext.getCurrentAgentWorkflow();
+        if (null == currentAgentWorkflow) {
             return runnerNode;
         }
-        AiAgentConfigTableVO.Module.AgentWorkflow agentWorkflow = agentWorkflows.get(0);
-        String agentType = agentWorkflow.getType();
+        String agentType = currentAgentWorkflow.getType();
         AgentTypeEnum agentTypeEnum = AgentTypeEnum.formType(agentType);
         String node = agentTypeEnum.getNode();
         return switch (node) {
             case "sequentialAgentNode" -> sequentialAgentNode;
             case "parallelAgentNode" -> parallelAgentNode;
             case "loopAgentNode" -> loopAgentNode;
-            default -> defaultStrategyHandler;
+            default -> {
+                log.error("Ai Agent 配置操作 - AgentWorkflowNode - 找不到对应的节点, 直接路由到 runnerNode");
+                yield runnerNode;
+            }
         };
     }
 }

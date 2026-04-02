@@ -17,6 +17,7 @@ import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author jasonlat
@@ -50,8 +51,11 @@ public class DefaultArmoryFactory {
         /** 智能体配置组 */
         private Map<String, BaseAgent> agentGroup = new HashMap<>(8);
 
-        /** 智能体工作流组 */
-        private List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = new ArrayList<>(8);
+        /** 步长 */
+        private AtomicInteger currentStepIndex = new AtomicInteger(0);
+
+        /** 当前处理的智能体工作流节点 */
+        private AiAgentConfigTableVO.Module.AgentWorkflow currentAgentWorkflow;
 
         private Map<String, Object> dataObjects = new HashMap<>();
 
@@ -72,6 +76,13 @@ public class DefaultArmoryFactory {
                     .map(agentGroup::get)
                     .filter(Objects::nonNull)
                     .toList();
+        }
+
+        public void addCurrentStepIndex() {
+            currentStepIndex.incrementAndGet();
+        }
+        public int getCurrentStepIndex() {
+            return currentStepIndex.get();
         }
     }
 }

@@ -8,6 +8,7 @@ import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.jasonlat.ai.domain.agent.model.valobj.enums.AgentTypeEnum;
 import com.jasonlat.ai.domain.agent.service.amory.AbstractAmorySupport;
 import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultArmoryFactory;
+import com.jasonlat.ai.domain.agent.service.amory.node.AgentWorkflowNode;
 import com.jasonlat.design.framework.tree.StrategyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,20 +40,19 @@ public class ParallelAgentNode extends AbstractAmorySupport {
     protected AiAgentRegisterVO doApply(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
         log.info("Ai Agent 配置操作 - ParallelAgentNode");
 
-        List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
-        AiAgentConfigTableVO.Module.AgentWorkflow parallelAgentConfig = agentWorkflows.remove(0);
+        AiAgentConfigTableVO.Module.AgentWorkflow currentAgentWorkflow = dynamicContext.getCurrentAgentWorkflow();
 
-        List<String> subAgentNames = parallelAgentConfig.getSubAgents();
+        List<String> subAgentNames = currentAgentWorkflow.getSubAgents();
         List<BaseAgent> subAgents = dynamicContext.queryAgentsByName(subAgentNames);
 
         ParallelAgent parallelAgent =
                 ParallelAgent.builder()
-                        .name(parallelAgentConfig.getName())
+                        .name(currentAgentWorkflow.getName())
                         .subAgents(subAgents)
-                        .description(parallelAgentConfig.getDescription())
+                        .description(currentAgentWorkflow.getDescription())
                         .build();
 
-        dynamicContext.getAgentGroup().put(parallelAgentConfig.getName(), parallelAgent);
+        dynamicContext.getAgentGroup().put(currentAgentWorkflow.getName(), parallelAgent);
         return router(requestParameter, dynamicContext);
     }
 
@@ -70,18 +70,6 @@ public class ParallelAgentNode extends AbstractAmorySupport {
      */
     @Override
     public StrategyHandler<ArmoryCommandEntity, DefaultArmoryFactory.DynamicContext, AiAgentRegisterVO> get(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
-        List<AiAgentConfigTableVO.Module.AgentWorkflow> agentWorkflows = dynamicContext.getAgentWorkflows();
-        if (null == agentWorkflows || agentWorkflows.isEmpty()) {
-            return defaultStrategyHandler;
-        }
-        AiAgentConfigTableVO.Module.AgentWorkflow agentWorkflow = agentWorkflows.get(0);
-        String agentType = agentWorkflow.getType();
-        AgentTypeEnum agentTypeEnum = AgentTypeEnum.formType(agentType);
-        String node = agentTypeEnum.getNode();
-        return switch (node) {
-            case "loopAgentNode" -> beanUtils.getBean("loopAgentNode");
-            case "sequentialAgentNode" -> beanUtils.getBean("sequentialAgentNode");
-            default -> defaultStrategyHandler;
-        };
+        return beanUtils.getBean("agentWorkflowNode", AgentWorkflowNode.class);
     }
 }
