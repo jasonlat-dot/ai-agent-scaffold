@@ -114,6 +114,8 @@ public class AiAgentConfigTableVO {
                 /** stdio服务参数 */
                 private StdioServerParameters stdio;
 
+                private LocalParameters local;
+
                 @Data
                 public static class SSEServerParameters {
                     /** 服务名称 */
@@ -146,6 +148,11 @@ public class AiAgentConfigTableVO {
                         private Map<String, String> env;
 
                     }
+                }
+
+                @Data
+                public static class LocalParameters {
+                    private String beanName;
                 }
 
             }

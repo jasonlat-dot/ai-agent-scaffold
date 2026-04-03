@@ -81,7 +81,7 @@ public class AiAgentAutoConfigTest {
                 .createSession(appName, "jasonlat")
                 .blockingGet();
 
-        Content userMsg = Content.fromParts(Part.fromText("给我一份学习计划"));
+        Content userMsg = Content.fromParts(Part.fromText("你能调用哪些mcp工具"));
         Flowable<Event> events = runner.runAsync("jasonlat", session.id(), userMsg);
 
         List<String> outputs = new ArrayList<>();

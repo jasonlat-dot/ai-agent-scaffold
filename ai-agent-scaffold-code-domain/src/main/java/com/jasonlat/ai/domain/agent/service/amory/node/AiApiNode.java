@@ -60,6 +60,15 @@ public class AiApiNode extends AbstractAmorySupport {
         log.info("Ai Agent 装配操作 - AiApiNode");
         // 编写api实例化的操作
         AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
+        // 默认的 openAiApi
+        registerDefaultAiApiConfig(aiAgentConfigTableVO, dynamicContext);
+        // 处理自定义的 openAiApi
+        registerLlmAgentAiApiConfig(aiAgentConfigTableVO, dynamicContext);
+        // 路由到下一个节点，如不需要路由 可以直接返回结果
+        return router(requestParameter, dynamicContext);
+    }
+
+    private void registerDefaultAiApiConfig(AiAgentConfigTableVO aiAgentConfigTableVO, DefaultArmoryFactory.DynamicContext dynamicContext) {
         AiAgentConfigTableVO.Module.AiApi aiApiConfig = aiAgentConfigTableVO.getModule().getAiApi();
 
         OpenAiApi openAiApi = OpenAiApi.builder()
@@ -70,7 +79,9 @@ public class AiApiNode extends AbstractAmorySupport {
                 .build();
         // 设置默认的 openAiApi
         dynamicContext.getOpenAiApiMap().put(getDefaultAiApiMapKey(aiAgentConfigTableVO.getAppName()), openAiApi);
+    }
 
+    private void registerLlmAgentAiApiConfig(AiAgentConfigTableVO aiAgentConfigTableVO, DefaultArmoryFactory.DynamicContext dynamicContext) {
         List<AiAgentConfigTableVO.Module.Agent> llmAgents = aiAgentConfigTableVO.getModule().getLlmAgents();
         if (null == llmAgents || llmAgents.isEmpty()) {
             throw new RuntimeException("module.llmAgents is empty");
@@ -88,8 +99,5 @@ public class AiApiNode extends AbstractAmorySupport {
                 dynamicContext.getOpenAiApiMap().put(llmAgent.getName(), llmAgentOpenAiApi);
             }
         });
-
-        // 路由到下一个节点，如不需要路由 可以直接返回结果
-        return router(requestParameter, dynamicContext);
     }
 }

@@ -26,6 +26,8 @@ ai:
                     base-uri: http://appbuilder.baidu.com/
                     sse-endpoint: v2/ai_search/mcp/sse?api_key=bce-v3/ALTAK-wrj8IPc6KH5Z1dsynXxEW/4a9da7380443ecfe9b168c8bea5f8eb1969534d4
                     request-timeout: 30000
+                - local:
+                    bean-name: myToolCallbackProvider
             # 不能为空
             llm-agents:
               - name: onlyAgent
