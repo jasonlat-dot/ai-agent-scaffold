@@ -32,10 +32,7 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
+
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -89,18 +86,6 @@
             <groupId>com.jasonlat.dot</groupId>
             <artifactId>jasonlat-wrench-starter-design-framework</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.gitee.li--jiaqiang</groupId>
-            <artifactId>token-spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.gitee.li--jiaqiang</groupId>
-            <artifactId>redisson-spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.jasonlat.dot</groupId>
-            <artifactId>jasonlat-wrench-starter-design-framework</artifactId>
-        </dependency>
 <!--        自定义 jar end-->
 
         <!-- 系统模块 start-->
@@ -109,38 +94,6 @@
             <artifactId>ai-agent-scaffold-code-types</artifactId>
         </dependency>
 <!--        系统模块 end-->
-
-        <!-- spring ai 框架 begin -->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-starter-model-openai</artifactId>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-starter-mcp-client</artifactId>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-tika-document-reader</artifactId>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-vector-store</artifactId>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-pgvector-store</artifactId>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-starter-mcp-client-webflux</artifactId>-->
-<!--        </dependency>-->
-        <!-- spring ai 框架 end -->
 
     </dependencies>
 

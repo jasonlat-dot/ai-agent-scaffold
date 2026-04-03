@@ -3,7 +3,6 @@ package com.jasonlat.ai;
 
 import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.server.MyTestMcpService;
 import lombok.extern.slf4j.Slf4j;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -17,8 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configurable
 @EnableScheduling
 @SpringBootApplication
-@MapperScan("com.jasonlat.ai.infrastructure.dao")
-@ComponentScan(basePackages = {"com.jasonlat", "cc.jq1024.middleware"})
+@ComponentScan(basePackages = {"com.jasonlat"})
 public class Application {
 
     public static void main(String[] args){
