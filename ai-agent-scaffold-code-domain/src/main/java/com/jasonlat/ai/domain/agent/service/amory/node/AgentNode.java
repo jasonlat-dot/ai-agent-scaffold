@@ -7,6 +7,7 @@ import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.jasonlat.ai.domain.agent.service.amory.AbstractAmorySupport;
 import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultArmoryFactory;
+import com.jasonlat.ai.domain.agent.service.amory.matter.patch.LocalSpringAI;
 import com.jasonlat.design.framework.tree.StrategyHandler;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class AgentNode extends AbstractAmorySupport {
 
             LlmAgent llmAgent = LlmAgent.builder()
                     .name(agentConfig.getName())
-                    .model(new SpringAI(chatModel))
+                    .model(new LocalSpringAI(chatModel))
                     .description(agentConfig.getDescription())
                     .instruction(agentConfig.getInstruction())
                     .outputKey(agentConfig.getOutputKey())

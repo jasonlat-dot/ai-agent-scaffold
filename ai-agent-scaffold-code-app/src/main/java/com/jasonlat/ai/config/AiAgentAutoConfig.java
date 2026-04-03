@@ -33,7 +33,7 @@ public class AiAgentAutoConfig implements ApplicationListener<ApplicationReadyEv
     private static final Logger log = LoggerFactory.getLogger(AiAgentAutoConfig.class);
 
     /** 智能体名称分隔符 */
-    private static final String NAME_SEPARATOR = "#";
+    private static final String NAME_SEPARATOR = "_";
 
     @Resource
     private AiAgentAutoConfigProperties aiAgentAutoConfigProperties;
