@@ -1,13 +1,12 @@
-package com.jasonlat.ai.domain.agent.service.amory.mcp.client.factory;
+package com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.factory;
 
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
-import com.jasonlat.ai.domain.agent.service.amory.mcp.client.ToolMcpCreateService;
-import com.jasonlat.ai.domain.agent.service.amory.mcp.client.impl.LocalToolMcpCreateService;
-import com.jasonlat.ai.domain.agent.service.amory.mcp.client.impl.SSEToolMcpCreateService;
-import com.jasonlat.ai.domain.agent.service.amory.mcp.client.impl.StdioToolMcpCreateService;
+import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.ToolMcpCreateService;
+import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.impl.LocalToolMcpCreateService;
+import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.impl.SSEToolMcpCreateService;
+import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.impl.StdioToolMcpCreateService;
 import com.jasonlat.ai.types.enums.ResponseCode;
 import com.jasonlat.ai.types.exception.AppException;
-import com.jasonlat.ai.types.model.Response;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 

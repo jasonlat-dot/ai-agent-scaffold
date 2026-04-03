@@ -1,7 +1,7 @@
-package com.jasonlat.ai.domain.agent.service.amory.mcp.client.impl;
+package com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.impl;
 
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
-import com.jasonlat.ai.domain.agent.service.amory.mcp.client.ToolMcpCreateService;
+import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.ToolMcpCreateService;
 import com.jasonlat.ai.types.utils.BeanUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;

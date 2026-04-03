@@ -2,6 +2,7 @@ package com.jasonlat.ai.domain.agent.service.amory.node;
 
 import com.google.adk.agents.BaseAgent;
 import com.google.adk.agents.SequentialAgent;
+import com.google.adk.plugins.BasePlugin;
 import com.google.adk.runner.InMemoryRunner;
 import com.jasonlat.ai.domain.agent.model.entity.ArmoryCommandEntity;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
@@ -14,6 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author jasonlat
@@ -62,15 +66,24 @@ public class RunnerNode extends AbstractAmorySupport {
         return aiAgentRegisterVO;
     }
 
-    private static @NotNull InMemoryRunner getRunner(DefaultArmoryFactory.DynamicContext dynamicContext, AiAgentConfigTableVO aiAgentConfigTableVO, String appName) {
-        AiAgentConfigTableVO.Module.Runner runner = aiAgentConfigTableVO.getModule().getRunner();
-        String runnerAgentName = runner.getAgentName();
+    private @NotNull InMemoryRunner getRunner(DefaultArmoryFactory.DynamicContext dynamicContext, AiAgentConfigTableVO aiAgentConfigTableVO, String appName) {
+        AiAgentConfigTableVO.Module.Runner runnerConfig = aiAgentConfigTableVO.getModule().getRunner();
+        String runnerAgentName = runnerConfig.getAgentName();
         BaseAgent baseAgent = dynamicContext.getAgentGroup().get(runnerAgentName);
         if (baseAgent == null) {
             // runner.agentName 不正确
             throw new AppException("runner.agentName is illegal");
         }
-        return new InMemoryRunner(baseAgent, appName);
+        List<String> pluginNameList = runnerConfig.getPluginNameList();
+        // 创建 runner
+        if (null == pluginNameList || pluginNameList.isEmpty()) return new InMemoryRunner(baseAgent, appName);
+
+        List<BasePlugin> basePlugins = new ArrayList<>(pluginNameList.size());
+        pluginNameList.forEach(pluginName -> {
+            BasePlugin basePlugin = beanUtils.getBean(pluginName, BasePlugin.class);
+            basePlugins.add(basePlugin);
+        });
+        return new InMemoryRunner(baseAgent, appName, basePlugins);
     }
 
     /**

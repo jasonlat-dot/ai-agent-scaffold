@@ -1,7 +1,7 @@
 
 package com.jasonlat.ai;
 
-import com.jasonlat.ai.domain.agent.service.amory.mcp.server.MyTestMcpService;
+import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.server.MyTestMcpService;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.ai.tool.ToolCallbackProvider;
