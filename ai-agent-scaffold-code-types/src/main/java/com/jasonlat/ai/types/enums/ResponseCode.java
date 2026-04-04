@@ -24,7 +24,7 @@ public enum ResponseCode {
     PRODUCT_STOCK_ERROR("ERR_BIZ_005", "商品库存不足"),
     PRODUCT_STATE_ERROR("ERR_BIZ_003", "商品已下架（非open状态）"),
     NOT_SUPPORT_METHOD("SERVER_ERROR_001", "不支持的请求方法"),
-
+    AGENT_NOT_FOUND("SERVER_ERROR_002", "Agent not found"),
     /**
      * 用户端错误
      */

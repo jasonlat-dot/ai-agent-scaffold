@@ -22,7 +22,7 @@ public class AppException extends RuntimeException {
     private final String info;
 
     public AppException(String info) {
-        this.code = "ERROR_0001";
+        this.code = "SERVER_ERROR";
         this.info = info;
     }
 

@@ -6,6 +6,7 @@ import com.jasonlat.ai.domain.agent.model.entity.ArmoryCommandEntity;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.jasonlat.ai.domain.agent.service.amory.node.RootNode;
+import com.jasonlat.ai.types.utils.BeanUtils;
 import com.jasonlat.design.framework.tree.StrategyHandler;
 import jakarta.annotation.Resource;
 import lombok.AllArgsConstructor;
@@ -27,12 +28,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DefaultArmoryFactory {
 
     @Resource
+    private BeanUtils beanUtils;
+
+    @Resource
     private RootNode rootNode;
 
     public StrategyHandler<ArmoryCommandEntity, DynamicContext, AiAgentRegisterVO> armoryStrategyHandler() {
         return rootNode;
     }
 
+    public AiAgentRegisterVO getAiAgentRegisterVO(String agentId) {
+        return beanUtils.getBean(agentId, AiAgentRegisterVO.class);
+    }
     /**
      * 动态上下文
      */

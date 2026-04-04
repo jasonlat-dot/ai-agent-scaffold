@@ -4,6 +4,7 @@ import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,5 +22,5 @@ public class AiAgentAutoConfigProperties {
     /**
      * ai agent 表配置,可以配置多个agent配置
      */
-    private Map<String, AiAgentConfigTableVO> tables;
+    private Map<String, AiAgentConfigTableVO> tables = new HashMap<>(4);
 }

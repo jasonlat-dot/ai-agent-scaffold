@@ -30,12 +30,14 @@ ai:
                     bean-name: myToolCallbackProvider
             # 不能为空
             llm-agents:
-              - name: onlyAgent
+              - name: CarbonCaptureResearcher
                 description: 小傅哥学习项目计划
                 instruction: |
                   通过百度检索小傅哥编程实战项目，并根据检索内容，针对初学用户给出学习计划。
+                chat-model:
+                  model: glm-4v-flash
             runner:
-              agent-name: onlyAgent
+              agent-name: CarbonCaptureResearcher
               plugin-name-list:
                 - myTestPlugin
                 - myLogPlugin
