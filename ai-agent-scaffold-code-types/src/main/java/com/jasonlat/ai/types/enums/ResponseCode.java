@@ -220,7 +220,9 @@ public enum ResponseCode {
     THIRD_PARTY_C0500("C0500", "通知服务出错"),
     THIRD_PARTY_C0501("C0501", "短信提醒服务失败"),
     THIRD_PARTY_C0502("C0502", "语音提醒服务失败"),
-    THIRD_PARTY_C0503("C0503", "邮件提醒服务失败");
+    THIRD_PARTY_C0503("C0503", "邮件提醒服务失败"),
+
+    SESSION_NOT_EXIST("SESSION_NOT_EXIST", "会话已过期");
 
 
     private String code;

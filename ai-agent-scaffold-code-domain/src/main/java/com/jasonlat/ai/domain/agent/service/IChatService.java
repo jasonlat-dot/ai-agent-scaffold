@@ -6,8 +6,11 @@ import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import io.reactivex.rxjava3.core.Flowable;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public interface IChatService {
+
+    boolean validateSession(String agentId, String userId, String sessionId);
 
     String createSession(String agentId, String userId);
 

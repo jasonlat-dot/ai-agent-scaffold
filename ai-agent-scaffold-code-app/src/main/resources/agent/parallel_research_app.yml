@@ -12,7 +12,7 @@ ai:
             # 不能为空
             ai-api:
               base-url: https://open.bigmodel.cn/api/paas/
-              api-key: 242234771dd941379f67a52f8ac5a63a.64S1Yv17xk9KtsJG
+              api-key: ${glm.api-key}
               completions-path: v4/chat/completions
               embeddings-path: v4/embeddings
             # 不能为空
@@ -22,9 +22,9 @@ ai:
               tool-mcp-list:
                 - sse:
                     name: baidu-search
-                    base-uri: http://appbuilder.baidu.com/
-                    sse-endpoint: v2/ai_search/mcp/sse?api_key=bce-v3/ALTAK-wrj8IPc6KH5Z1dsynXxEW/4a9da7380443ecfe9b168c8bea5f8eb1969534d4
-                    request-timeout: 30000
+                    base-uri: http://appbuilder.baidu.com
+                    sse-endpoint: /v2/ai_search/mcp/sse?api_key=${baidu.api-key}
+                    request-timeout: 300000
             llm-agents:
               - name: RenewableEnergyResearcher
                 ai-api:

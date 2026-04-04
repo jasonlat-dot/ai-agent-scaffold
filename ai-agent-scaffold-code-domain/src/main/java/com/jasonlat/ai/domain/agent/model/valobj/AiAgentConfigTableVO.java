@@ -22,6 +22,9 @@ public class AiAgentConfigTableVO {
     /** 智能体模块 */
     private Module module;
 
+    /** session 过期时间, 默认一小时 */
+    private long sessionExpireSeconds = 3600L;
+
     @Data
     public static class AgentDefinition  {
 

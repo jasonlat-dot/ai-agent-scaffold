@@ -36,7 +36,7 @@ public class Response<T> implements Serializable {
     }
 
     public static <T> Response<T> success(String info, T data) {
-        return build("SUCCESS", info, data);
+        return build("SUCCESS_0000", info, data);
     }
 
 }

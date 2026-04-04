@@ -2,6 +2,7 @@ package com.jasonlat.ai.domain.agent.service.amory.factory;
 
 import com.google.adk.agents.BaseAgent;
 import com.google.adk.agents.SequentialAgent;
+import com.google.adk.sessions.BaseSessionService;
 import com.jasonlat.ai.domain.agent.model.entity.ArmoryCommandEntity;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
@@ -40,6 +41,17 @@ public class DefaultArmoryFactory {
     public AiAgentRegisterVO getAiAgentRegisterVO(String agentId) {
         return beanUtils.getBean(agentId, AiAgentRegisterVO.class);
     }
+
+    /**
+     * 删除 ADK 缓存
+     */
+    public void deleteAdkSession(String agentId, String userId, String sessionId) {
+        AiAgentRegisterVO aiAgentRegisterVO = getAiAgentRegisterVO(agentId);
+        BaseSessionService baseSessionService = aiAgentRegisterVO.getRunner().sessionService();
+        // 删除 session
+        baseSessionService.deleteSession(aiAgentRegisterVO.getAppName(),userId, sessionId).blockingAwait();
+    }
+
     /**
      * 动态上下文
      */

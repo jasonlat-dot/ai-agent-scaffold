@@ -58,6 +58,7 @@ public class RunnerNode extends AbstractAmorySupport {
                 .agentName(agentName)
                 .agentId(agentId)
                 .agentDesc(agentDesc)
+                .sessionExpireSeconds(aiAgentConfigTableVO.getSessionExpireSeconds())
                 .runner(inMemoryRunner)
                 .build();
 

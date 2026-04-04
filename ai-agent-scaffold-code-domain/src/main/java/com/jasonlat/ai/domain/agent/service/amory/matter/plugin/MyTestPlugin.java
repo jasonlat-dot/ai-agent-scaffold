@@ -41,9 +41,9 @@ public class MyTestPlugin extends BasePlugin {
 //        return super.beforeModelCallback(callbackContext, llmRequest);
 //    }
 
-    @Override
-    public Maybe<LlmResponse> beforeModelCallback(CallbackContext callbackContext, LlmRequest.Builder llmRequest) {
-        log.info("before - AI模型 {}", llmRequest.build().model());
-        return super.beforeModelCallback(callbackContext, llmRequest);
-    }
+//    @Override
+//    public Maybe<LlmResponse> beforeModelCallback(CallbackContext callbackContext, LlmRequest.Builder llmRequest) {
+//        log.info("before - AI模型 {}", llmRequest.build().model());
+//        return super.beforeModelCallback(callbackContext, llmRequest);
+//    }
 }

@@ -36,6 +36,11 @@ public class AiAgentRegisterVO {
     private String agentDesc;
 
     /**
+     * session 默认过期时间
+     */
+    private long sessionExpireSeconds;
+
+    /**
      * 智能体运行器
      */
     private InMemoryRunner runner;

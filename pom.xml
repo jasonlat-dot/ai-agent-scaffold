@@ -21,7 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-ai.version>1.1.0-M3</spring-ai.version>
         <langchain4j.version>1.4.0</langchain4j.version>
-        <google.sdk.version>1.0.0-rc.1</google.sdk.version><!--      0.4.0 ->  1.0.0-rc.1 -->
+        <google.sdk.version>0.4.0</google.sdk.version><!--      0.4.0 ->  1.0.0-rc.1 -->
     </properties>
 
     <developers>
