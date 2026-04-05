@@ -230,7 +230,7 @@ public class AgentController implements IAgentService {
         } catch (AppException e) {
             log.error("流式对话异常", e);
             try {
-                emitter.send("data: 错误: " + e.getInfo() + "\n\n");
+                emitter.send("data: 错误: " + JSON.toJSONString(e.getInfo()) + "\n\n");
             } catch (Exception ex) {
                 log.error("发送错误信息失败", ex);
             }
@@ -238,7 +238,7 @@ public class AgentController implements IAgentService {
         } catch (Exception e) {
             log.error("流式对话失败", e);
             try {
-                emitter.send("data: 错误: 服务异常\n\n");
+                emitter.send("data: 错误: "+ JSON.toJSONString(e.getMessage()) + "\n\n");
             } catch (Exception ex) {
                 log.error("发送错误信息失败", ex);
             }

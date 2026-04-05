@@ -102,7 +102,8 @@ public class AiAgentAutoConfigTest {
                 .createSession(appName, "jasonlat")
                 .blockingGet();
 
-        Content userMsg = Content.fromParts(Part.fromText("你有哪些skills技能"));
+        Content userMsg = Content.fromParts(Part.fromText("你有哪" +
+                "些skills技能"));
         Flowable<Event> events = runner.runAsync("jasonlat", session.id(), userMsg);
 
         List<String> outputs = new ArrayList<>();
