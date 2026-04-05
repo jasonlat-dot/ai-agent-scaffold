@@ -5,14 +5,13 @@ import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentRegisterVO;
 import com.jasonlat.ai.domain.agent.service.amory.AbstractAmorySupport;
 import com.jasonlat.ai.domain.agent.service.amory.factory.DefaultArmoryFactory;
-import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.ToolMcpCreateService;
+import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.IToolMcpCreateService;
 import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.factory.DefaultMcpClientFactory;
+import com.jasonlat.ai.domain.agent.service.amory.matter.skills.IToolSkillsCreateService;
 import com.jasonlat.design.framework.tree.StrategyHandler;
 import jakarta.annotation.Resource;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
@@ -37,6 +36,9 @@ public class ChatModelNode extends AbstractAmorySupport {
     @Resource
     private DefaultMcpClientFactory mcpClientFactory;
 
+    @Resource
+    private IToolSkillsCreateService skillsCreateService;
+
     /**
      * 业务流程处理方法
      * <p>
@@ -53,51 +55,36 @@ public class ChatModelNode extends AbstractAmorySupport {
     protected AiAgentRegisterVO doApply(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
         log.info("Ai Agent 装配操作 - ChatModelNode");
         AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
-        // 注册默认配置的 chatModel
-        registerDefaultChatModelConfig(aiAgentConfigTableVO, dynamicContext);
-        // 处理个性化的 chatModel
-        registerLlmAgentChatModelConfig(aiAgentConfigTableVO, dynamicContext);
+        AiAgentConfigTableVO.Module.ChatModel chatModelConfig = aiAgentConfigTableVO.getModule().getChatModel();
+        // 获取默认配置的 openAiApi
+        OpenAiApi defaultOpenAiApi = dynamicContext.getOpenAiApiMap().get(getDefaultAiApiMapKey(aiAgentConfigTableVO.getAppName()));
+        // 构建默认的 chatModel, 放入上下文。
+        OpenAiChatModel defaultChatModel = buildChatModel(chatModelConfig, defaultOpenAiApi);
+        dynamicContext.getChatModelMap().put(getDefaultChatModelMapKey(aiAgentConfigTableVO.getAppName()), defaultChatModel);
+
+        // 获取LlmAgents
+        List<AiAgentConfigTableVO.Module.Agent> llmAgents = aiAgentConfigTableVO.getModule().getLlmAgents();
+        if (llmAgents == null || llmAgents.isEmpty()) return this.router(requestParameter, dynamicContext);
+        // 循环处理
+        llmAgents.forEach(llmAgent -> {
+            AiAgentConfigTableVO.Module.ChatModel llmAgentChatModelConfig = llmAgent.getChatModel();
+            // 如果没有自定义配置的 chatModel， 则使用默认的 chatModel(包括mcp、skills) 不做处理
+            // 只处理自定义配置的 chatModel
+            if (null != llmAgentChatModelConfig) {
+                // 获取自定义配置的 openAiApi
+                OpenAiApi llmAgentOpenAiApi = dynamicContext.getOpenAiApiMap().get(llmAgent.getName());
+                if (null == llmAgentOpenAiApi ) {
+                    // 如果没有自定义配置的 openAi， 则使用默认的 openAiApi
+                    llmAgentOpenAiApi = defaultOpenAiApi;
+                }
+                OpenAiChatModel llmAgentChatModel = buildChatModel(llmAgentChatModelConfig, llmAgentOpenAiApi);
+                dynamicContext.getChatModelMap().put(llmAgent.getName(), llmAgentChatModel);
+            }
+        });
+
         // 路由下一个节点
         return router(requestParameter, dynamicContext);
     }
-
-    private void registerDefaultChatModelConfig(AiAgentConfigTableVO aiAgentConfigTableVO, DefaultArmoryFactory.DynamicContext dynamicContext) {
-        AiAgentConfigTableVO.Module.ChatModel chatModelConfig = aiAgentConfigTableVO.getModule().getChatModel();
-        // 获取默认配置的 openAiApi
-        OpenAiApi openAiApi = dynamicContext.getOpenAiApiMap().get(getDefaultAiApiMapKey(aiAgentConfigTableVO.getAppName()));
-        // 构建默认的 mcpSyncClient
-        List<ToolCallback> toolCallbacks = getMcpSyncClients(chatModelConfig);
-        // 构建默认的 chatModel
-        ChatModel chatModel = getChatModel(openAiApi, chatModelConfig, toolCallbacks);
-        dynamicContext.getChatModelMap().put(getDefaultChatModelMapKey(aiAgentConfigTableVO.getAppName()), chatModel);
-    }
-
-    private void registerLlmAgentChatModelConfig(AiAgentConfigTableVO aiAgentConfigTableVO, DefaultArmoryFactory.DynamicContext dynamicContext) {
-        AiAgentConfigTableVO.Module.ChatModel defaultChatModelConfig = aiAgentConfigTableVO.getModule().getChatModel();
-        List<AiAgentConfigTableVO.Module.Agent> llmAgents = aiAgentConfigTableVO.getModule().getLlmAgents();
-        if (llmAgents == null || llmAgents.isEmpty()) {
-            throw new RuntimeException("module.llmAgents is empty");
-        }
-        llmAgents.forEach(llmAgent -> {
-            AiAgentConfigTableVO.Module.ChatModel llmAgentChatModelConfig = llmAgent.getChatModel();
-            if (null == llmAgentChatModelConfig) {
-                // 如果没有自定义配置的 chatModel， 则使用默认的 chatModel
-                llmAgentChatModelConfig = defaultChatModelConfig;
-            }
-            // 获取自定义配置的 openAiApi
-            OpenAiApi llmAgentOpenAiApi = dynamicContext.getOpenAiApiMap().get(llmAgent.getName());
-            if (null == llmAgentOpenAiApi ) {
-                // 如果没有自定义配置的 openAi， 则使用默认的 openAiApi
-                llmAgentOpenAiApi = dynamicContext.getOpenAiApiMap().get(getDefaultAiApiMapKey(aiAgentConfigTableVO.getAppName()));
-            }
-            // 构建自定义的 mcpSyncClient
-            List<ToolCallback> llmAgentToolCallbacks = getMcpSyncClients(defaultChatModelConfig);
-            // 构建自定义的 chatModel
-            ChatModel llmAgentChatModel = getChatModel(llmAgentOpenAiApi, llmAgentChatModelConfig, llmAgentToolCallbacks);
-            dynamicContext.getChatModelMap().put(llmAgent.getName(), llmAgentChatModel);
-        });
-    }
-
 
     /**
      * 获取待执行的策略处理器
@@ -116,8 +103,36 @@ public class ChatModelNode extends AbstractAmorySupport {
         return agentNode;
     }
 
+    private OpenAiChatModel buildChatModel(AiAgentConfigTableVO.Module.ChatModel chatModelConfig, OpenAiApi openAiApi ) {
+        List<ToolCallback> toolCallbacks = new ArrayList<>(8);
+        // 获取默认的 mcpSyncClient
+        List<AiAgentConfigTableVO.Module.ChatModel.ToolMcp> toolMcpList = chatModelConfig.getToolMcpList();
+        if ((toolMcpList != null && !toolMcpList.isEmpty())) {
+            toolMcpList.forEach(toolMcp -> {
+                try {
+                    IToolMcpCreateService toolMcpCreateService = mcpClientFactory.getToolMcpCreateService(toolMcp);
+                    ToolCallback[] mcpToolCallbacks = toolMcpCreateService.buildToolCallback(toolMcp);
+                    toolCallbacks.addAll(List.of(mcpToolCallbacks));
+                } catch (Exception e) {
+                    log.error("创建 mcpSyncClient 失败", e);
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+        // 获取默认的 skills
+        List<AiAgentConfigTableVO.Module.ChatModel.ToolSkills> toolSkillsList = chatModelConfig.getToolSkillsList();
+        if ((toolSkillsList != null && !toolSkillsList.isEmpty())) {
+            toolSkillsList.forEach(toolSkills -> {
+                try {
+                    ToolCallback[] toolSkillsCallbacks = skillsCreateService.buildToolCallback(toolSkills);
+                    toolCallbacks.addAll(List.of(toolSkillsCallbacks));
+                } catch (Exception e) {
+                    log.error("创建 skills 失败", e);
+                    throw new RuntimeException(e);
+                }
+            });
+        }
 
-    private static @NotNull ChatModel getChatModel(OpenAiApi openAiApi, AiAgentConfigTableVO.Module.ChatModel chatModelConfig, List<ToolCallback> toolCallbacks) {
         return OpenAiChatModel.builder()
                 .openAiApi(openAiApi)
                 .defaultOptions(OpenAiChatOptions.builder()
@@ -125,20 +140,6 @@ public class ChatModelNode extends AbstractAmorySupport {
                         .toolCallbacks(toolCallbacks)
                         .build())
                 .build();
-    }
-
-    private @NotNull List<ToolCallback> getMcpSyncClients(AiAgentConfigTableVO.Module.ChatModel chatModelConfig) {
-        List<ToolCallback> toolCallbackList = new ArrayList<>(8);
-        chatModelConfig.getToolMcpList().forEach(toolMcp -> {
-            try {
-                ToolMcpCreateService toolMcpCreateService = mcpClientFactory.getToolMcpCreateService(toolMcp);
-                ToolCallback[] toolCallbacks = toolMcpCreateService.buildToolCallback(toolMcp);
-                toolCallbackList.addAll(List.of(toolCallbacks));
-            } catch (Exception e) {
-                log.error("创建 mcpSyncClient 失败", e);
-            }
-        });
-        return toolCallbackList;
     }
 
 }

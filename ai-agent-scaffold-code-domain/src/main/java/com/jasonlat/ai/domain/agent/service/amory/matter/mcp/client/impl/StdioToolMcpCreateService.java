@@ -2,7 +2,7 @@ package com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
-import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.ToolMcpCreateService;
+import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.IToolMcpCreateService;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.ServerParameters;
@@ -19,7 +19,7 @@ import java.time.Duration;
 
 @Slf4j
 @Service
-public class StdioToolMcpCreateService implements ToolMcpCreateService {
+public class StdioToolMcpCreateService implements IToolMcpCreateService {
     @Override
     public ToolCallback[] buildToolCallback(AiAgentConfigTableVO.Module.ChatModel.ToolMcp toolMcp) {
         AiAgentConfigTableVO.Module.ChatModel.ToolMcp.StdioServerParameters stdioConfig = toolMcp.getStdio();

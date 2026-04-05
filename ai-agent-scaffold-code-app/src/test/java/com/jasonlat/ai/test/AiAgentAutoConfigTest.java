@@ -11,6 +11,7 @@ import io.reactivex.rxjava3.core.Flowable;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runner.Runner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -82,6 +83,26 @@ public class AiAgentAutoConfigTest {
                 .blockingGet();
 
         Content userMsg = Content.fromParts(Part.fromText("你能调用哪些mcp工具"));
+        Flowable<Event> events = runner.runAsync("jasonlat", session.id(), userMsg);
+
+        List<String> outputs = new ArrayList<>();
+        events.blockingForEach(event -> outputs.add(event.stringifyContent()));
+
+        log.info("测试结果:{}", JSON.toJSONString(outputs));
+    }
+
+    @Test
+    public void test_handlerMessage_04(){
+        AiAgentRegisterVO aiAgentRegisterVO = applicationContext.getBean("testAgent2", AiAgentRegisterVO.class);
+
+        String appName = aiAgentRegisterVO.getAppName();
+        InMemoryRunner runner = aiAgentRegisterVO.getRunner();
+
+        Session session = runner.sessionService()
+                .createSession(appName, "jasonlat")
+                .blockingGet();
+
+        Content userMsg = Content.fromParts(Part.fromText("你有哪些skills技能"));
         Flowable<Event> events = runner.runAsync("jasonlat", session.id(), userMsg);
 
         List<String> outputs = new ArrayList<>();

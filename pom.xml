@@ -10,7 +10,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.3</version>
+<!--        <version>3.4.3</version>-->
+        <version>3.4.3</version> <!-- 3.4.3 -> 4.0.5  配合 SpringAi 2.0.0-M2使用 -->
     </parent>
 
     <properties>
@@ -19,8 +20,9 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-ai.version>1.1.0-M3</spring-ai.version>
+        <spring-ai.version>1.1.0-M3</spring-ai.version> <!--     1.1.0-M3 -> 2.0.0-M2 -->
         <langchain4j.version>1.4.0</langchain4j.version>
+        <postgresql.version>42.7.5</postgresql.version>
         <google.sdk.version>0.4.0</google.sdk.version><!--      0.4.0 ->  1.0.0-rc.1 -->
     </properties>
 
@@ -109,6 +111,13 @@
                 <version>${spring-ai.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- https://github.com/spring-ai-community/spring-ai-agent-utils -->
+            <dependency>
+                <groupId>org.springaicommunity</groupId>
+                <artifactId>spring-ai-agent-utils</artifactId>
+                <version>0.4.2</version>
             </dependency>
 
             <!-- 定义 langchain4j的版本 langchain4j https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-bom -->

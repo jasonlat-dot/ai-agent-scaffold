@@ -34,9 +34,12 @@ ai:
               - name: CarbonCaptureResearcher
                 description: 通用智能体
                 instruction: |
-                  你是一个通用智能体 解答日常问题和编程问题
+                  你是一个通用智能体 解答日常问题和编程问题, 擅长使用skills
                 chat-model:
-                  model: glm-4v-flash
+                  model: glm-4.7-flash
+                  tool-skills-list:
+                    - root-path: agent/skills
+                      type: resource
             runner:
               agent-name: CarbonCaptureResearcher
 #              plugin-name-list:

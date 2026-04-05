@@ -9,6 +9,6 @@ import org.springframework.ai.tool.ToolCallback;
  * @author jasonlat
  * 2026-04-01  18:45
  */
-public interface ToolMcpCreateService {
+public interface IToolMcpCreateService {
     ToolCallback[] buildToolCallback(AiAgentConfigTableVO.Module.ChatModel.ToolMcp toolMcp) throws Exception;
 }

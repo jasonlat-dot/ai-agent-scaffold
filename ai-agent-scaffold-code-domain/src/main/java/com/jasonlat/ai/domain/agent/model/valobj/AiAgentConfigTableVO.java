@@ -1,6 +1,8 @@
 package com.jasonlat.ai.domain.agent.model.valobj;
 
 import lombok.Data;
+import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +111,15 @@ public class AiAgentConfigTableVO {
             private String model;
             /** mcp列表 */
             private List<ToolMcp> toolMcpList = new ArrayList<>(4);
+            /** Skills */
+            private List<ToolSkills> toolSkillsList = new ArrayList<>(4);
+
+            @Data
+            public static class ToolSkills {
+                // resource
+                private String type = "directory";
+                private String rootPath;
+            }
 
             @Data
             public static class ToolMcp {

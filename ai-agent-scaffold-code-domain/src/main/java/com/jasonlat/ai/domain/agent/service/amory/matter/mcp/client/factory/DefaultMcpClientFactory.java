@@ -1,7 +1,7 @@
 package com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.factory;
 
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
-import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.ToolMcpCreateService;
+import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.IToolMcpCreateService;
 import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.impl.LocalToolMcpCreateService;
 import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.impl.SSEToolMcpCreateService;
 import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.impl.StdioToolMcpCreateService;
@@ -20,7 +20,7 @@ public class DefaultMcpClientFactory {
     @Resource
     private SSEToolMcpCreateService sseToolMcpCreateService;
 
-    public ToolMcpCreateService getToolMcpCreateService(AiAgentConfigTableVO.Module.ChatModel.ToolMcp toolMcp) {
+    public IToolMcpCreateService getToolMcpCreateService(AiAgentConfigTableVO.Module.ChatModel.ToolMcp toolMcp) {
         AiAgentConfigTableVO.Module.ChatModel.ToolMcp.SSEServerParameters sseConfig = toolMcp.getSse();
         AiAgentConfigTableVO.Module.ChatModel.ToolMcp.StdioServerParameters stdioConfig = toolMcp.getStdio();
         AiAgentConfigTableVO.Module.ChatModel.ToolMcp.LocalParameters local = toolMcp.getLocal();

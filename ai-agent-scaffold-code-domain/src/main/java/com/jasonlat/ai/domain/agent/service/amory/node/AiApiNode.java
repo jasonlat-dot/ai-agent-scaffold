@@ -60,44 +60,33 @@ public class AiApiNode extends AbstractAmorySupport {
         log.info("Ai Agent 装配操作 - AiApiNode");
         // 编写api实例化的操作
         AiAgentConfigTableVO aiAgentConfigTableVO = requestParameter.getAiAgentConfigTableVO();
-        // 默认的 openAiApi
-        registerDefaultAiApiConfig(aiAgentConfigTableVO, dynamicContext);
-        // 处理自定义的 openAiApi
-        registerLlmAgentAiApiConfig(aiAgentConfigTableVO, dynamicContext);
+        // 获取默认的 openAiApi 配置
+        AiAgentConfigTableVO.Module.AiApi aiApiConfig = aiAgentConfigTableVO.getModule().getAiApi();
+        OpenAiApi openAiApi = buildOpenAiApi(aiApiConfig);
+        // 设置默认的 openAiApi 到动态上下文
+        dynamicContext.getOpenAiApiMap().put(getDefaultAiApiMapKey(aiAgentConfigTableVO.getAppName()), openAiApi);
+
+        // 获取LlmAgents
+        List<AiAgentConfigTableVO.Module.Agent> llmAgents = aiAgentConfigTableVO.getModule().getLlmAgents();
+        if (llmAgents == null || llmAgents.isEmpty()) return this.router(requestParameter, dynamicContext);
+        llmAgents.forEach(llmAgent -> {
+            AiAgentConfigTableVO.Module.AiApi llmAgentAiApiConfig = llmAgent.getAiApi();
+            if (null != llmAgentAiApiConfig) {
+                OpenAiApi llmAgentOpenAiApi = buildOpenAiApi(llmAgentAiApiConfig);
+                dynamicContext.getOpenAiApiMap().put(llmAgent.getName(), llmAgentOpenAiApi);
+            }
+        });
+
         // 路由到下一个节点，如不需要路由 可以直接返回结果
         return router(requestParameter, dynamicContext);
     }
 
-    private void registerDefaultAiApiConfig(AiAgentConfigTableVO aiAgentConfigTableVO, DefaultArmoryFactory.DynamicContext dynamicContext) {
-        AiAgentConfigTableVO.Module.AiApi aiApiConfig = aiAgentConfigTableVO.getModule().getAiApi();
-
-        OpenAiApi openAiApi = OpenAiApi.builder()
+    private OpenAiApi buildOpenAiApi(AiAgentConfigTableVO.Module.AiApi aiApiConfig ) {
+        return OpenAiApi.builder()
                 .baseUrl(aiApiConfig.getBaseUrl())
                 .apiKey(aiApiConfig.getApiKey())
                 .completionsPath(aiApiConfig.getCompletionsPath())
                 .embeddingsPath(aiApiConfig.getEmbeddingsPath())
                 .build();
-        // 设置默认的 openAiApi
-        dynamicContext.getOpenAiApiMap().put(getDefaultAiApiMapKey(aiAgentConfigTableVO.getAppName()), openAiApi);
-    }
-
-    private void registerLlmAgentAiApiConfig(AiAgentConfigTableVO aiAgentConfigTableVO, DefaultArmoryFactory.DynamicContext dynamicContext) {
-        List<AiAgentConfigTableVO.Module.Agent> llmAgents = aiAgentConfigTableVO.getModule().getLlmAgents();
-        if (null == llmAgents || llmAgents.isEmpty()) {
-            throw new RuntimeException("module.llmAgents is empty");
-        }
-        // 处理自定义的 openAiApi
-        llmAgents.forEach(llmAgent -> {
-            AiAgentConfigTableVO.Module.AiApi llmAgentAiApiConfig = llmAgent.getAiApi();
-            if (null != llmAgentAiApiConfig) {
-                OpenAiApi llmAgentOpenAiApi = OpenAiApi.builder()
-                        .baseUrl(llmAgentAiApiConfig.getBaseUrl())
-                        .apiKey(llmAgentAiApiConfig.getApiKey())
-                        .completionsPath(llmAgentAiApiConfig.getCompletionsPath())
-                        .embeddingsPath(llmAgentAiApiConfig.getEmbeddingsPath())
-                        .build();
-                dynamicContext.getOpenAiApiMap().put(llmAgent.getName(), llmAgentOpenAiApi);
-            }
-        });
     }
 }

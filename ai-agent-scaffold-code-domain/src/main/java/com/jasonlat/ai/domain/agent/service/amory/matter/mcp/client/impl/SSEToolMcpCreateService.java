@@ -1,7 +1,7 @@
 package com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.impl;
 
 import com.jasonlat.ai.domain.agent.model.valobj.AiAgentConfigTableVO;
-import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.ToolMcpCreateService;
+import com.jasonlat.ai.domain.agent.service.amory.matter.mcp.client.IToolMcpCreateService;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
@@ -18,7 +18,7 @@ import java.time.Duration;
 
 @Slf4j
 @Service
-public class SSEToolMcpCreateService implements ToolMcpCreateService {
+public class SSEToolMcpCreateService implements IToolMcpCreateService {
     @Override
     public ToolCallback[] buildToolCallback(AiAgentConfigTableVO.Module.ChatModel.ToolMcp toolMcp) throws Exception {
         AiAgentConfigTableVO.Module.ChatModel.ToolMcp.SSEServerParameters sseConfig = toolMcp.getSse();

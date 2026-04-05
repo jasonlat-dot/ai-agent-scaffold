@@ -46,6 +46,12 @@
         </dependency>
 
         <!-- spring ai & google adk begin -->
+        <!-- https://github.com/spring-ai-community/spring-ai-agent-utils -->
+        <dependency>
+            <groupId>org.springaicommunity</groupId>
+            <artifactId>spring-ai-agent-utils</artifactId>
+        </dependency>
+
         <dependency>
             <!--  这个依赖被定义在了 spring-ai-bom 里，里面有和opanai, ollama等结合的依赖 -->
             <groupId>org.springframework.ai</groupId>
