@@ -366,6 +366,21 @@ function appendMessage(role, content) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
+function extractStreamTextPayload(payload) {
+    if (typeof payload === 'string') {
+        return payload;
+    }
+    if (payload && typeof payload === 'object') {
+        if (payload.type === 'error') {
+            throw new Error(payload.message || '未知流式错误');
+        }
+        if (typeof payload.content === 'string') {
+            return payload.content;
+        }
+    }
+    return '';
+}
+
 function renderSessionMessages(messages) {
     chatMessages.innerHTML = '';
     chatMessages.appendChild(welcomeScreen);
@@ -626,6 +641,7 @@ async function handleStreamChat(payload) {
 
     let buffer = '';
     let pollTimer = null;
+    let streamClosed = false;
     const flush = () => {
         pollTimer = null;
         if (!buffer) return;
@@ -636,6 +652,19 @@ async function handleStreamChat(payload) {
         if (!pollTimer) {
             pollTimer = setTimeout(flush, 100);
         }
+    };
+
+    const renderStreamError = (message) => {
+        if (pollTimer) {
+            clearTimeout(pollTimer);
+            pollTimer = null;
+        }
+        contentEl.classList.remove('streaming-content');
+        contentEl.innerHTML = renderMarkdown(`流式请求失败: ${message || '未知错误'}`);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        isStreaming = false;
+        streamClosed = true;
+        hideLoading();
     };
 
     try {
@@ -651,6 +680,9 @@ async function handleStreamChat(payload) {
         const readStream = () => {
             reader.read().then(({ done, value }) => {
                 if (done) {
+                    if (streamClosed) {
+                        return;
+                    }
                     if (pollTimer) clearTimeout(pollTimer);
                     contentEl.innerHTML = renderMarkdown(buffer);
                     contentEl.classList.remove('streaming-content');
@@ -670,7 +702,8 @@ async function handleStreamChat(payload) {
                     if (line.startsWith('data: ')) {
                         const raw = line.substring(6);
                         if (raw && raw !== '[DONE]') {
-                            buffer += JSON.parse(raw);
+                            const payload = JSON.parse(raw);
+                            buffer += extractStreamTextPayload(payload);
                         }
                         scheduleFlush();
                     } else {
@@ -680,22 +713,14 @@ async function handleStreamChat(payload) {
                 readStream();
             }).catch(error => {
                 console.error('Stream error:', error);
-                if (pollTimer) clearTimeout(pollTimer);
-                if (buffer) {
-                    contentEl.innerHTML = renderMarkdown(buffer);
-                }
-                contentEl.classList.remove('streaming-content');
-                isStreaming = false;
-                hideLoading();
+                renderStreamError(error.message || '未知错误');
             });
         };
 
         readStream();
     } catch (error) {
         console.error('Chat error:', error);
-        hideLoading();
-        isStreaming = false;
-        appendMessage('ai', '网络错误，请稍后重试');
+        renderStreamError(error.message || '网络错误，请稍后重试');
     }
 }
 

@@ -66,40 +66,4 @@ public class ChatCommandEntity {
             private String mimeType;
         }
     }
-    public static ChatCommandEntity buildSessionCommand(String agentId, String userId) {
-        ChatCommandEntity chatCommandEntity = new ChatCommandEntity();
-        chatCommandEntity.setAgentId(agentId);
-        chatCommandEntity.setUserId(userId);
-
-        return chatCommandEntity;
-    }
-
-    public static ChatCommandEntity buildChatCommand(String agentId, String userId,String sessionId, String message) {
-        return ChatCommandEntity.builder()
-                .agentId(agentId)
-                .userId(userId)
-                .sessionId(sessionId)
-                .texts(List.of(Content.Text.builder().message(message).build()))
-                .build();
-    }
-
-    public static ChatCommandEntity buildChatCommand(String agentId, String userId, String message, String sessionId, String fileUri, String mimeType) {
-        return ChatCommandEntity.builder()
-                .agentId(agentId)
-                .userId(userId)
-                .sessionId(sessionId)
-                .texts(List.of(Content.Text.builder().message(message).build()))
-                .files(List.of(Content.File.builder().fileUri(fileUri).mimeType(mimeType).build()))
-                .build();
-    }
-
-    public static ChatCommandEntity buildChatCommand(String agentId, String userId, String message, String sessionId, byte[] data, String mimeType) {
-        return ChatCommandEntity.builder()
-                .agentId(agentId)
-                .userId(userId)
-                .sessionId(sessionId)
-                .texts(List.of(Content.Text.builder().message(message).build()))
-                .inlineData(List.of(Content.InlineData.builder().data(data).mimeType(mimeType).build()))
-                .build();
-    }
 }

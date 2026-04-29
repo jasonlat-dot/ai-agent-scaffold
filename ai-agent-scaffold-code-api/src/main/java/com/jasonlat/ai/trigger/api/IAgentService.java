@@ -21,5 +21,5 @@ public interface IAgentService {
 
     Response<ChatResponse> chat(ChatRequest request);
 
-    public ResponseBodyEmitter chatStream(ChatRequest request, HttpServletResponse response);
+    ResponseBodyEmitter chatStream(ChatRequest request, HttpServletResponse response);
 }

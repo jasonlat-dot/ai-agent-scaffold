@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+
 /**
  * Assemble trigger-layer chat requests into domain chat commands.
  *
@@ -20,21 +21,11 @@ import java.util.List;
 @Component
 public class ChatRequestAssembler {
 
-    public boolean hasInputContent(ChatRequest request) {
-        boolean hasText = request.getTexts() != null &&
-                request.getTexts().stream().anyMatch(item -> StringUtils.isNotBlank(item.getMessage()));
-        boolean hasFiles = request.getFiles() != null && request.getFiles().stream()
-                .anyMatch(item -> StringUtils.isNotBlank(item.getFileUri()) && StringUtils.isNotBlank(item.getMimeType()));
-        boolean hasInlineData = request.getInlineData() != null && request.getInlineData().stream()
-                .anyMatch(item -> StringUtils.isNotBlank(item.getData()));
-        return hasText || hasFiles || hasInlineData;
-    }
-
-    public ChatCommandEntity toChatCommand(ChatRequest request, String sessionId) {
+    public ChatCommandEntity toChatCommand(ChatRequest request) {
         return ChatCommandEntity.builder()
                 .agentId(request.getAgentId())
                 .userId(request.getUserId())
-                .sessionId(sessionId)
+                .sessionId(request.getSessionId())
                 .texts(buildTexts(request))
                 .files(buildFiles(request))
                 .inlineData(buildInlineData(request))
@@ -86,11 +77,16 @@ public class ChatRequestAssembler {
     }
 
     private byte[] decodeBase64(String data) {
+        return getBytes(data);
+    }
+
+    public static byte[] getBytes(String data) {
         String raw = data;
         int commaIndex = data.indexOf(',');
         if (data.startsWith("data:") && commaIndex >= 0) {
             raw = data.substring(commaIndex + 1);
         }
+
         try {
             return Base64.getDecoder().decode(raw);
         } catch (IllegalArgumentException e) {

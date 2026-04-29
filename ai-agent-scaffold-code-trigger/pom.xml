@@ -46,6 +46,10 @@
             <groupId>com.jasonlat.ai</groupId>
             <artifactId>ai-agent-scaffold-code-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.jasonlat.ai</groupId>
+            <artifactId>ai-agent-scaffold-code-cases</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

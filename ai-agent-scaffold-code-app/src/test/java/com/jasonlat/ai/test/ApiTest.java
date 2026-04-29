@@ -61,19 +61,19 @@ public class ApiTest {
                 .build();
 
         // 模型测试，没问题可以识别图片
-//        ChatResponse response = chatModel.call(new Prompt(
-//                UserMessage.builder()
-//                        .text("请描述这张图片的主要内容，并说明图中物品的可能用途。")
-//                        .media(Media.builder()
-//                                .mimeType(MimeType.valueOf(MimeTypeUtils.IMAGE_PNG_VALUE))
-//                                .data(resource)
-//                                .build())
-//                        .build(),
-//                OpenAiChatOptions.builder()
-//                        .model("gpt-5.4") // glm-4.6v-flash glm-4v-flash
-//                        .build()));
-//
-//        System.out.println("测试结果" + JSON.toJSONString(response));
+        ChatResponse response = chatModel.call(new Prompt(
+                UserMessage.builder()
+                        .text("请描述这张图片的主要内容，并说明图中物品的可能用途。")
+                        .media(Media.builder()
+                                .mimeType(MimeType.valueOf(MimeTypeUtils.IMAGE_PNG_VALUE))
+                                .data(resource)
+                                .build())
+                        .build(),
+                OpenAiChatOptions.builder()
+                        .model("gpt-5.4") // glm-4.6v-flash glm-4v-flash
+                        .build()));
+
+        System.out.println("测试结果" + JSON.toJSONString(response));
 
 
         // agent 测试

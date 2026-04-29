@@ -49,6 +49,7 @@
         <module>ai-agent-scaffold-code-infrastructure</module>
         <module>ai-agent-scaffold-code-types</module>
         <module>ai-agent-scaffold-code-api</module>
+        <module>ai-agent-scaffold-code-cases</module>
     </modules>
 
     <repositories>
@@ -295,6 +296,11 @@
             <dependency>
                 <groupId>com.jasonlat.ai</groupId>
                 <artifactId>ai-agent-scaffold-code-api</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jasonlat.ai</groupId>
+                <artifactId>ai-agent-scaffold-code-cases</artifactId>
                 <version>1.0</version>
             </dependency>
 
