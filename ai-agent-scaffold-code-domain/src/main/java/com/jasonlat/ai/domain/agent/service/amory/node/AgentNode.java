@@ -54,6 +54,7 @@ public class AgentNode extends AbstractAmorySupport {
             }
 
             LlmAgent llmAgent = LlmAgent.builder()
+                    .maxSteps(agentConfig.getMaxRetry())
                     .name(agentConfig.getName())
                     .model(new LocalSpringAI(chatModel))
                     .description(agentConfig.getDescription())

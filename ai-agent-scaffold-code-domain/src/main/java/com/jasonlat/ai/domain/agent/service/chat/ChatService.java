@@ -154,8 +154,6 @@ public class ChatService implements IChatService {
         InMemoryRunner runner = aiAgentRegisterVO.getRunner();
         RunConfig runConfig = RunConfig.builder()
                 .setStreamingMode(RunConfig.StreamingMode.SSE) // 逐字返回
-                .setMaxLlmCalls(20)
-                .setSaveInputBlobsAsArtifacts(true)
                 .build();
         // 构建用户信息
         Content userContent = Content.builder().role("user").parts(parts).build();

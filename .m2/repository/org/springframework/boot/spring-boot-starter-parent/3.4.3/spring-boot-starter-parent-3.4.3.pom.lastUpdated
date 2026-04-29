@@ -1,0 +1,6 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed Apr 29 20:37:32 GMT+08:00 2026
+http\://0.0.0.0/.error=Could not transfer artifact org.springframework.boot\:spring-boot-starter-parent\:pom\:3.4.3 from/to maven-default-http-blocker (http\://0.0.0.0/)\: Blocked mirror for repositories\: [nexus-aliyun (http\://maven.aliyun.com/nexus/content/groups/public/, default, releases)]
+@default-maven-default-http-blocker-http\://0.0.0.0/.lastUpdated=1777466246508
+@default-central-https\://repo.maven.apache.org/maven2/.lastUpdated=1777466252041
+https\://repo.maven.apache.org/maven2/.error=Could not transfer artifact org.springframework.boot\:spring-boot-starter-parent\:pom\:3.4.3 from/to central (https\://repo.maven.apache.org/maven2)\: Permission denied\: connect

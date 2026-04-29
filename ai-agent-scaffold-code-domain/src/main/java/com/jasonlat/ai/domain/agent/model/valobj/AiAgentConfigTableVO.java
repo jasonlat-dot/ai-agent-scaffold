@@ -80,6 +80,8 @@ public class AiAgentConfigTableVO {
             private String description;
             /** 输出参数 */
             private String outputKey;
+            /** 最大重试次数 */
+            private Integer maxRetry = 3;
 
             /** 自定义 - AI API 配置 可为空，不配置就取默认 */
             private AiApi aiApi;
